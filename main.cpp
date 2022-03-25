@@ -1,8 +1,7 @@
 #include <iostream>
-#include <glad/glad.h>
-#include <GLFW/glfw3.h>
+#include "app.hpp"
 
 int main() {
-	std::cout << "Hello World!" << std::endl;
-	return 0;
+	App mainApplicaton;
+	return mainApplicaton.loop();
 }
