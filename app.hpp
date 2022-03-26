@@ -7,6 +7,7 @@
 #include "Shaders/shaderClass.hpp"
 #include "VBO.hpp"
 #include "VAO.hpp"
+#include "EBO.hpp"
 
 class App {
 public:

@@ -12,9 +12,10 @@ VAO's are like structs / wrappers of draw calls, pointers to VBO's.
 class VAO {
 public:
 	// Constructor that generates a VAO ID
-	VAO(VBO VBO, float* vertices, int verticesNum);
+	VAO();
 
 	// Functions for binding, unbinding, freeing, etc.
+	void LinkVBO(VBO& VBO, GLuint layout);
 	void Bind();
 	void Unbind();
 	void Delete();

@@ -12,7 +12,7 @@ instant access to the vertex data.
 
 class VBO {
 public:
-	VBO(float* vertices, int verticesNum);
+	VBO(GLfloat* vertices, GLsizeiptr size);
 
 	// Functions for binding, unbinding, freeing, etc.
 	void Bind();

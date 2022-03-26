@@ -1,12 +1,16 @@
 #include"VAO.hpp"
 
 // Constructor that generates a VAO ID
-VAO::VAO(VBO VBO, float* vertices, int verticesNum) {
+VAO::VAO() {
 	glGenVertexArrays(1, &ID);
-	glBindBuffer(GL_ARRAY_BUFFER, VBO.ID);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, verticesNum, GL_FLOAT, GL_FALSE, verticesNum * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+}
+
+// Links a VBO to the VAO using a certain layout
+void VAO::LinkVBO(VBO& VBO, GLuint layout) {
+	VBO.Bind();
+	glVertexAttribPointer(layout, 3, GL_FLOAT, GL_FALSE, 0, (void*)0);
+	glEnableVertexAttribArray(layout);
+	VBO.Unbind();
 }
 
 // Binds the VAO

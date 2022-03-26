@@ -3,10 +3,23 @@
 #define WINDOWWIDTH 800
 #define WINDOWHEIGHT 600
 
-float vertices[] = {
-    -0.5f, -0.5f, 0.0f,
-     0.5f, -0.5f, 0.0f,
-     0.0f,  0.5f, 0.0f
+// Vertices coordinates
+GLfloat vertices[] =
+{
+    -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower left corner
+    0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower right corner
+    0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f, // Upper corner
+    -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // Inner left
+    0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // Inner right
+    0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f // Inner down
+};
+
+// Indices for vertices order
+GLuint indices[] =
+{
+    0, 3, 5, // Lower left triangle
+    3, 2, 4, // Lower right triangle
+    5, 4, 1 // Upper triangle
 };
 
 // Constructor (init variables)
@@ -43,7 +56,8 @@ int App::loop() {
 
     // Setup shaders
     Shader defaultShader("Shaders/default.vert", "Shaders/default.frag");
-   
+    
+    /*
     GLuint VAO, VBO;
     // Generate the VAO and VBO 
     glGenVertexArrays(1, &VAO);
@@ -62,16 +76,21 @@ int App::loop() {
     // Bind both the VBO and VAO to 0 so that we don't accidentally modify the VAO and VBO we created
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
-
-    // VBO
-    /*
-    VBO VBO(vertices, 3);
-    VAO VAO(VBO, vertices, 3);
-    defaultShader.Activate();
-    VAO.Bind();
-    glDrawArrays(GL_TRIANGLES, 0, 3);
     */
     
+    // Generates VAO and bind
+    VAO VAO;
+    VAO.Bind();
+
+    // Generates VBO and EBO and link to vert array, the link VAO to VBO
+    VBO VBO(vertices, sizeof(vertices));
+    VAO.LinkVBO(VBO, 0);
+    EBO EBO(indices, sizeof(indices));
+
+    // Unbind all to prevent accidentally modifying them
+    VAO.Unbind();
+    VBO.Unbind();
+    EBO.Unbind();
 
     // Render loop
     while (!glfwWindowShouldClose(currWindow)) {
@@ -81,8 +100,8 @@ int App::loop() {
         glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         defaultShader.Activate();
-        glBindVertexArray(VAO);
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        VAO.Bind();
+        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
         // Swap colour buffer & check if any events are triggered (e.g. keyboard or mouse input)
         glfwSwapBuffers(currWindow);
@@ -90,6 +109,9 @@ int App::loop() {
     }
 
     // Cleanup
+    VAO.Delete();
+    VBO.Delete();
+    EBO.Delete();
     defaultShader.Delete();
     glfwTerminate();
     return 0;
