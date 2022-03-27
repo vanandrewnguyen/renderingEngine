@@ -4,10 +4,13 @@
 #include <iostream>
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
+#include <stb/stb_image.h>
+
 #include "Shaders/shaderClass.hpp"
 #include "VBO.hpp"
 #include "VAO.hpp"
 #include "EBO.hpp"
+
 
 class App {
 public:

@@ -4,22 +4,22 @@
 #define WINDOWHEIGHT 600
 
 // Vertices coordinates
-GLfloat vertices[] =
-{
-    -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower left corner
-    0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower right corner
-    0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f, // Upper corner
-    -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // Inner left
-    0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // Inner right
-    0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f // Inner down
+GLfloat vertices[] = {
+    // Vert Coord       // Tex Coord
+     0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+     0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+    -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+    -0.5f,  0.5f, 0.0f, 0.0f, 1.0f
+};
+GLuint indices[] = {  // note that we start from 0!
+    0, 1, 3,   // first triangle
+    1, 2, 3    // second triangle
 };
 
-// Indices for vertices order
-GLuint indices[] =
-{
-    0, 3, 5, // Lower left triangle
-    3, 2, 4, // Lower right triangle
-    5, 4, 1 // Upper triangle
+float texCoords[] = {
+    0.0f, 0.0f,  // lower-left corner  
+    1.0f, 0.0f,  // lower-right corner
+    0.5f, 1.0f   // top-center corner
 };
 
 // Constructor (init variables)
@@ -57,50 +57,63 @@ int App::loop() {
     // Setup shaders
     Shader defaultShader("Shaders/default.vert", "Shaders/default.frag");
     
-    /*
-    GLuint VAO, VBO;
-    // Generate the VAO and VBO 
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    // Introduce vertices in VBO
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // Configure the Vertex Attribute so that OpenGL knows how to read the VBO
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    // Bind both the VBO and VAO to 0 so that we don't accidentally modify the VAO and VBO we created
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    */
-    
     // Generates VAO and bind
     VAO VAO;
     VAO.Bind();
 
     // Generates VBO and EBO and link to vert array, the link VAO to VBO
     VBO VBO(vertices, sizeof(vertices));
-    VAO.LinkVBO(VBO, 0);
     EBO EBO(indices, sizeof(indices));
-
+    VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(vertices), (void*)0);
+    VAO.LinkAttrib(VBO, 1, 2, GL_FLOAT, sizeof(vertices), (void*)(3 * sizeof(float)));
+    
     // Unbind all to prevent accidentally modifying them
     VAO.Unbind();
     VBO.Unbind();
     EBO.Unbind();
 
+    // Textures
+    int widthImg, heightImg, numColourChannel;
+    unsigned char* bytes = stbi_load("texBrickWall.png", &widthImg, &heightImg, &numColourChannel, 0);
+
+    GLuint texID;
+    glGenTextures(1, &texID);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, texID);
+    // Tex settings
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
+    // Mip maps
+    glGenerateMipmap(GL_TEXTURE_2D);
+    // Delete data
+    stbi_image_free(bytes);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // Get uniforms
+    int timeUni = glGetUniformLocation(defaultShader.ID, "iTime");
+    GLuint tex0Uni = glGetUniformLocation(defaultShader.ID, "tex0");
+    defaultShader.Activate();
+    glUniform1i(tex0Uni, 0);
+
     // Render loop
     while (!glfwWindowShouldClose(currWindow)) {
         handleUserInput(currWindow);
 
-        // Rendering Commands
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        // Rendering Commands //
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         defaultShader.Activate();
+
+        // Pass uniforms
+        float timeVal = glfwGetTime();
+        glUniform1f(timeUni, timeVal);
+        glBindTexture(GL_TEXTURE_2D, texID);
+
         VAO.Bind();
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // wireframe mode
         glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
         // Swap colour buffer & check if any events are triggered (e.g. keyboard or mouse input)
@@ -112,6 +125,7 @@ int App::loop() {
     VAO.Delete();
     VBO.Delete();
     EBO.Delete();
+    glDeleteTextures(1, &texID);
     defaultShader.Delete();
     glfwTerminate();
     return 0;
