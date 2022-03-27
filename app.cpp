@@ -74,21 +74,30 @@ int App::loop() {
     // Uniforms
     GLuint uniTime = glGetUniformLocation(defaultShader.ID, "iTime");
 
+    // Camera
+    Camera camera(WINDOWWIDTH, WINDOWHEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
+
     // Render loop
+    glEnable(GL_DEPTH_TEST);
     while (!glfwWindowShouldClose(currWindow)) {
         handleUserInput(currWindow);
 
         // Rendering Commands
         glClearColor(0.0f, 0.05f, 0.1f, 1.0f);
-        glClear(GL_COLOR_BUFFER_BIT);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
         defaultShader.Activate();
+        
+        // Camera
+        camera.Inputs(currWindow);
+        camera.updateMatrix(45.0f, 0.1f, 100.0f);
+        camera.Matrix(defaultShader, "camMatrix");
 
         // Uniforms
         glUniform1f(uniTime, glfwGetTime());
         brickTex.Bind();
         VAO.Bind();
         
-        glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
+        glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(int), GL_UNSIGNED_INT, 0);
 
         // Swap colour buffer & check if any events are triggered (e.g. keyboard or mouse input)
         glfwSwapBuffers(currWindow);
