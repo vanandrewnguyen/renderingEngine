@@ -170,6 +170,8 @@
   <ItemGroup>
     <None Include="Shaders\default.frag" />
     <None Include="Shaders\default.vert" />
+    <None Include="Shaders\light.frag" />
+    <None Include="Shaders\light.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\texBrickWall.png" />
