@@ -11,7 +11,6 @@
 #include "VAO.hpp"
 #include "EBO.hpp"
 
-
 class App {
 public:
 	// Constructor
