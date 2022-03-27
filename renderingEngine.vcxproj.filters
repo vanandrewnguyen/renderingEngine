@@ -82,6 +82,12 @@
     <None Include="Shaders\default.frag">
       <Filter>Source Files\Shaders</Filter>
     </None>
+    <None Include="Shaders\light.frag">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\light.vert">
+      <Filter>Source Files\Shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\texBrickWall.png">
