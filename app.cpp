@@ -1,9 +1,9 @@
 #include "app.hpp"
 
 #define WINDOWWIDTH 800
-#define WINDOWHEIGHT 600
+#define WINDOWHEIGHT 800
 
-// Vertices coordinates
+
 GLfloat vertices[] = {
     // Vert Coord       // Tex Coord
      0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
@@ -14,12 +14,6 @@ GLfloat vertices[] = {
 GLuint indices[] = {  // note that we start from 0!
     0, 1, 3,   // first triangle
     1, 2, 3    // second triangle
-};
-
-float texCoords[] = {
-    0.0f, 0.0f,  // lower-left corner  
-    1.0f, 0.0f,  // lower-right corner
-    0.5f, 1.0f   // top-center corner
 };
 
 // Constructor (init variables)
@@ -64,56 +58,36 @@ int App::loop() {
     // Generates VBO and EBO and link to vert array, the link VAO to VBO
     VBO VBO(vertices, sizeof(vertices));
     EBO EBO(indices, sizeof(indices));
-    VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, sizeof(vertices), (void*)0);
-    VAO.LinkAttrib(VBO, 1, 2, GL_FLOAT, sizeof(vertices), (void*)(3 * sizeof(float)));
-    
+    // VBO / slot num / vec? / type / sizeof(float) * how long a line is (e.g. 3, 8 args), cast
+    VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
+    VAO.LinkAttrib(VBO, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)0);
+
     // Unbind all to prevent accidentally modifying them
     VAO.Unbind();
     VBO.Unbind();
     EBO.Unbind();
 
     // Textures
-    int widthImg, heightImg, numColourChannel;
-    unsigned char* bytes = stbi_load("texBrickWall.png", &widthImg, &heightImg, &numColourChannel, 0);
+    Texture brickTex("Textures/texBrickWall.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+    brickTex.assignTexUnit(defaultShader, "tex0", 0);
 
-    GLuint texID;
-    glGenTextures(1, &texID);
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texID);
-    // Tex settings
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, widthImg, heightImg, 0, GL_RGBA, GL_UNSIGNED_BYTE, bytes);
-    // Mip maps
-    glGenerateMipmap(GL_TEXTURE_2D);
-    // Delete data
-    stbi_image_free(bytes);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    // Get uniforms
-    int timeUni = glGetUniformLocation(defaultShader.ID, "iTime");
-    GLuint tex0Uni = glGetUniformLocation(defaultShader.ID, "tex0");
-    defaultShader.Activate();
-    glUniform1i(tex0Uni, 0);
+    // Uniforms
+    GLuint uniTime = glGetUniformLocation(defaultShader.ID, "iTime");
 
     // Render loop
     while (!glfwWindowShouldClose(currWindow)) {
         handleUserInput(currWindow);
 
-        // Rendering Commands //
-        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        // Rendering Commands
+        glClearColor(0.0f, 0.05f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         defaultShader.Activate();
 
-        // Pass uniforms
-        float timeVal = glfwGetTime();
-        glUniform1f(timeUni, timeVal);
-        glBindTexture(GL_TEXTURE_2D, texID);
-
+        // Uniforms
+        glUniform1f(uniTime, glfwGetTime());
+        brickTex.Bind();
         VAO.Bind();
-        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE); // wireframe mode
+        
         glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
         // Swap colour buffer & check if any events are triggered (e.g. keyboard or mouse input)
@@ -125,7 +99,7 @@ int App::loop() {
     VAO.Delete();
     VBO.Delete();
     EBO.Delete();
-    glDeleteTextures(1, &texID);
+    brickTex.Delete();
     defaultShader.Delete();
     glfwTerminate();
     return 0;

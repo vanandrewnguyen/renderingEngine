@@ -7,6 +7,7 @@ uniform float iTime;
 uniform sampler2D tex0;
 
 void main() {
-    vec3 col = texture(tex0, texCoord).rgb;
+    vec3 col = texture(tex0, texCoord).rgb * abs(sin(iTime));
+
     FragColor = vec4(col, 1.0);
 } 
