@@ -8,6 +8,7 @@
 #include "VBO.hpp"
 #include "VAO.hpp"
 #include "EBO.hpp"
+#include "texture.hpp"
 
 class App {
 public:

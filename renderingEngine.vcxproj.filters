@@ -16,6 +16,9 @@
     <Filter Include="Source Files\Shaders">
       <UniqueIdentifier>{3bb3ab42-286d-46f3-9b40-e1a7d9acc65b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Textures">
+      <UniqueIdentifier>{20d13310-a404-4243-8360-5e159c6ef5a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -39,6 +42,12 @@
     <ClCompile Include="EBO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="texture.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="stb.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app.hpp">
@@ -56,6 +65,9 @@
     <ClInclude Include="EBO.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="texture.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\default.vert">
@@ -64,5 +76,10 @@
     <None Include="Shaders\default.frag">
       <Filter>Source Files\Shaders</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Textures\texBrickWall.png">
+      <Filter>Source Files\Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>

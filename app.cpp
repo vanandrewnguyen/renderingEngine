@@ -1,25 +1,19 @@
 #include "app.hpp"
 
 #define WINDOWWIDTH 800
-#define WINDOWHEIGHT 600
+#define WINDOWHEIGHT 800
 
-// Vertices coordinates
-GLfloat vertices[] =
-{
-    -0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower left corner
-    0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f, // Lower right corner
-    0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f, // Upper corner
-    -0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // Inner left
-    0.5f / 2, 0.5f * float(sqrt(3)) / 6, 0.0f, // Inner right
-    0.0f, -0.5f * float(sqrt(3)) / 3, 0.0f // Inner down
+
+GLfloat vertices[] = {
+    // Vert Coord       // Tex Coord
+     0.5f,  0.5f, 0.0f, 1.0f, 1.0f,
+     0.5f, -0.5f, 0.0f, 1.0f, 0.0f,
+    -0.5f, -0.5f, 0.0f, 0.0f, 0.0f,
+    -0.5f,  0.5f, 0.0f, 0.0f, 1.0f
 };
-
-// Indices for vertices order
-GLuint indices[] =
-{
-    0, 3, 5, // Lower left triangle
-    3, 2, 4, // Lower right triangle
-    5, 4, 1 // Upper triangle
+GLuint indices[] = {  // note that we start from 0!
+    0, 1, 3,   // first triangle
+    1, 2, 3    // second triangle
 };
 
 // Constructor (init variables)
@@ -57,50 +51,43 @@ int App::loop() {
     // Setup shaders
     Shader defaultShader("Shaders/default.vert", "Shaders/default.frag");
     
-    /*
-    GLuint VAO, VBO;
-    // Generate the VAO and VBO 
-    glGenVertexArrays(1, &VAO);
-    glGenBuffers(1, &VBO);
-
-    glBindVertexArray(VAO);
-    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-
-    // Introduce vertices in VBO
-    glBufferData(GL_ARRAY_BUFFER, sizeof(vertices), vertices, GL_STATIC_DRAW);
-
-    // Configure the Vertex Attribute so that OpenGL knows how to read the VBO
-    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-
-    // Bind both the VBO and VAO to 0 so that we don't accidentally modify the VAO and VBO we created
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-    */
-    
     // Generates VAO and bind
     VAO VAO;
     VAO.Bind();
 
     // Generates VBO and EBO and link to vert array, the link VAO to VBO
     VBO VBO(vertices, sizeof(vertices));
-    VAO.LinkVBO(VBO, 0);
     EBO EBO(indices, sizeof(indices));
+    // VBO / slot num / vec? / type / sizeof(float) * how long a line is (e.g. 3, 8 args), cast
+    VAO.LinkAttrib(VBO, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
+    VAO.LinkAttrib(VBO, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)0);
 
     // Unbind all to prevent accidentally modifying them
     VAO.Unbind();
     VBO.Unbind();
     EBO.Unbind();
 
+    // Textures
+    Texture brickTex("Textures/texBrickWall.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
+    brickTex.assignTexUnit(defaultShader, "tex0", 0);
+
+    // Uniforms
+    GLuint uniTime = glGetUniformLocation(defaultShader.ID, "iTime");
+
     // Render loop
     while (!glfwWindowShouldClose(currWindow)) {
         handleUserInput(currWindow);
 
         // Rendering Commands
-        glClearColor(0.2f, 0.3f, 0.3f, 1.0f);
+        glClearColor(0.0f, 0.05f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT);
         defaultShader.Activate();
+
+        // Uniforms
+        glUniform1f(uniTime, glfwGetTime());
+        brickTex.Bind();
         VAO.Bind();
+        
         glDrawElements(GL_TRIANGLES, 9, GL_UNSIGNED_INT, 0);
 
         // Swap colour buffer & check if any events are triggered (e.g. keyboard or mouse input)
@@ -112,6 +99,7 @@ int App::loop() {
     VAO.Delete();
     VBO.Delete();
     EBO.Delete();
+    brickTex.Delete();
     defaultShader.Delete();
     glfwTerminate();
     return 0;

@@ -1,6 +1,13 @@
 #version 330 core
 out vec4 FragColor;
 
+in vec2 texCoord;
+
+uniform float iTime;
+uniform sampler2D tex0;
+
 void main() {
-    FragColor = vec4(1.0f, 0.5f, 0.2f, 1.0f);
+    vec3 col = texture(tex0, texCoord).rgb * abs(sin(iTime));
+
+    FragColor = vec4(col, 1.0);
 } 
