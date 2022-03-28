@@ -6,10 +6,10 @@
 
 GLfloat vertices[] = {
     // Vert Coord        // Tex Coord // Normals
-     0.5f,  0.5f, 0.0f,  1.0f, 1.0f,  0.0f, 0.0f, 1.0f,
-     0.5f, -0.5f, 0.0f,  1.0f, 0.0f,  0.0f, 0.0f, 1.0f,
-    -0.5f, -0.5f, 0.0f,  0.0f, 0.0f,  0.0f, 0.0f, 1.0f,
-    -0.5f,  0.5f, 0.0f,  0.0f, 1.0f,  0.0f, 0.0f, 1.0f
+    -1.0f, 0.0f,  1.0f,	 0.0f, 0.0f,  0.0f, 1.0f, 0.0f,
+    -1.0f, 0.0f, -1.0f,	 0.0f, 1.0f,  0.0f, 1.0f, 0.0f,
+     1.0f, 0.0f, -1.0f,  1.0f, 1.0f,  0.0f, 1.0f, 0.0f,
+     1.0f, 0.0f,  1.0f,  1.0f, 0.0f,  0.0f, 1.0f, 0.0f
 };
 GLuint indices[] = {  
     0, 1, 2,
@@ -88,8 +88,8 @@ int App::loop() {
     EBO EBO1(indices, sizeof(indices));
     // VBO / slot num / vec? / type / sizeof(float) * how long a line is (e.g. 3, 8 args), cast
     VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
-    VAO1.LinkAttrib(VBO1, 1, 2, GL_FLOAT, 8 * sizeof(float), (void*)0);
-    VAO1.LinkAttrib(VBO1, 2, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
+    VAO1.LinkAttrib(VBO1, 1, 2, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float))); // 3 -> vec3 in prev
+    VAO1.LinkAttrib(VBO1, 2, 3, GL_FLOAT, 8 * sizeof(float), (void*)(5 * sizeof(float))); // 3+2 -> vec2 in prev
 
     // Unbind all to prevent accidentally modifying them
     VAO1.Unbind();
