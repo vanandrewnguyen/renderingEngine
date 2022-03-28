@@ -93,5 +93,11 @@
     <Image Include="Textures\texBrickWall.png">
       <Filter>Source Files\Textures</Filter>
     </Image>
+    <Image Include="Textures\texWoodFloor.png">
+      <Filter>Source Files\Textures</Filter>
+    </Image>
+    <Image Include="Textures\texWoodFloorDisp.png">
+      <Filter>Source Files\Textures</Filter>
+    </Image>
   </ItemGroup>
 </Project>
