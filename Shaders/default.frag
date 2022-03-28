@@ -22,7 +22,7 @@ float getSpec(float specStrength, vec3 lightDir, vec3 normal, int specPow) {
 
 void main() {
     // Lighting
-    float ambient = 0.2;
+    float ambient = 0.1;
     vec3 normal = normalize(surfNormal);
     vec3 lightDir = normalize(lightPos - currentPos);
 
