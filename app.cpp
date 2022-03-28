@@ -12,8 +12,8 @@ GLfloat vertices[] = {
     -0.5f,  0.5f, 0.0f,  0.0f, 1.0f,  0.0f, 0.0f, 1.0f
 };
 GLuint indices[] = {  
-    0, 1, 3,   
-    1, 2, 3  
+    0, 1, 2,
+    0, 2, 3
 };
 
 GLfloat lightVertices[] = {
@@ -117,8 +117,10 @@ int App::loop() {
     subjectModel = glm::translate(subjectModel, subjectPos);
 
     // Textures
-    Texture brickTex("Textures/texBrickWall.png", GL_TEXTURE_2D, GL_TEXTURE0, GL_RGB, GL_UNSIGNED_BYTE);
-    brickTex.assignTexUnit(defaultShader, "tex0", 0);
+    Texture woodTex("Textures/texWoodFloor.png", GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE);
+    woodTex.assignTexUnit(defaultShader, "tex0", 0);
+    Texture woodDispTex("Textures/texWoodFloorDisp.png", GL_TEXTURE_2D, 1, GL_RED, GL_UNSIGNED_BYTE);
+    woodDispTex.assignTexUnit(defaultShader, "tex1", 1);
 
     // Uniforms
     GLuint uniTime = glGetUniformLocation(defaultShader.ID, "iTime");
@@ -152,7 +154,8 @@ int App::loop() {
 
         // Uniforms
         glUniform1f(uniTime, glfwGetTime());
-        brickTex.Bind();
+        woodTex.Bind();
+        woodDispTex.Bind();
         VAO1.Bind();
         
         // Draw our wall model
@@ -173,8 +176,13 @@ int App::loop() {
     VAO1.Delete();
     VBO1.Delete();
     EBO1.Delete();
-    brickTex.Delete();
+    woodTex.Delete();
+    woodDispTex.Delete();
     defaultShader.Delete();
+    lightVAO.Delete();
+    lightVBO.Delete();
+    lightEBO.Delete();
+    lightShader.Delete();
     glfwTerminate();
     return 0;
 }
