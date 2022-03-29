@@ -1,13 +1,14 @@
 #version 330 core
 out vec4 FragColor;
 
-in vec2 texCoord;
-in vec3 surfNormal;
+// Has to be in the same order as in vert. shd
 in vec3 currentPos;
+in vec3 surfNormal;
+in vec2 texCoord;
 
 uniform float iTime;
-uniform sampler2D tex0;
-uniform sampler2D tex1;
+uniform sampler2D diffuse0;
+uniform sampler2D specular0;
 uniform vec4 lightColour;
 uniform vec3 lightPos;
 uniform vec3 camPos;
@@ -38,8 +39,8 @@ vec3 getPointLight(float ambient, vec3 normal, vec3 lightDir) {
     // Phong
     float diff = max(dot(normal, lightDir), 0.0);
     float spec = getSpec(0.5, lightDir, normal, 16);
-    col = (texture(tex0, texCoord) * (diff * intensity + ambient) + 
-           texture(tex1, texCoord).r * spec * intensity).rgb * lightColour.rgb;
+    col = (texture(diffuse0, texCoord) * (diff * intensity + ambient) + 
+           texture(specular0, texCoord).r * spec * intensity).rgb * lightColour.rgb;
 
     return col;
 }
@@ -54,8 +55,8 @@ vec3 getDirectionalLight(float ambient, vec3 normal, vec3 lightDir) {
     // Phong
     float diff = max(dot(normal, lightDir), 0.0);
     float spec = getSpec(0.5, lightDir, normal, 16);
-	col = (texture(tex0, texCoord) * (diff + ambient) + 
-           texture(tex1, texCoord).r * spec).rgb * lightColour.rgb;
+	col = (texture(diffuse0, texCoord) * (diff + ambient) + 
+           texture(specular0, texCoord).r * spec).rgb * lightColour.rgb;
     
     return col;
 }
@@ -75,8 +76,8 @@ vec4 spotLight(float ambient, vec3 normal, vec3 lightDir, vec3 spotDir) {
     // Phong
     float diff = max(dot(normal, lightDir), 0.0);
     float spec = getSpec(0.5, lightDir, normal, 16);
-	col = (texture(tex0, texCoord) * (diff * intensity + ambient) + 
-           texture(tex1, texCoord).r * spec * intensity).rgb * lightColour.rgb;
+	col = (texture(diffuse0, texCoord) * (diff * intensity + ambient) + 
+           texture(specular0, texCoord).r * spec * intensity).rgb * lightColour.rgb;
 
     return col;
 }

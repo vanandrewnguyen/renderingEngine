@@ -152,6 +152,7 @@
     <ClCompile Include="EBO.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="mesh.cpp" />
     <ClCompile Include="Shaders\shaderClass.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="texture.cpp" />
@@ -162,6 +163,7 @@
     <ClInclude Include="app.hpp" />
     <ClInclude Include="camera.hpp" />
     <ClInclude Include="EBO.hpp" />
+    <ClInclude Include="mesh.hpp" />
     <ClInclude Include="Shaders\shaderClass.hpp" />
     <ClInclude Include="texture.hpp" />
     <ClInclude Include="VAO.hpp" />
