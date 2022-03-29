@@ -4,28 +4,28 @@
 #define WINDOWHEIGHT 800
 
 
-GLfloat vertices[] = {
-    // Vert Coord        // Tex Coord // Normals
-    -1.0f, 0.0f,  1.0f,	 0.0f, 0.0f,  0.0f, 1.0f, 0.0f,
-    -1.0f, 0.0f, -1.0f,	 0.0f, 1.0f,  0.0f, 1.0f, 0.0f,
-     1.0f, 0.0f, -1.0f,  1.0f, 1.0f,  0.0f, 1.0f, 0.0f,
-     1.0f, 0.0f,  1.0f,  1.0f, 0.0f,  0.0f, 1.0f, 0.0f
+Vertex vertices[] = {
+    // Vert Coord // Normals // Tex Coord
+    Vertex{glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
+    Vertex{glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f)},
+    Vertex{glm::vec3(1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f)},
+    Vertex{glm::vec3(1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f)}
 };
 GLuint indices[] = {  
     0, 1, 2,
     0, 2, 3
 };
 
-GLfloat lightVertices[] = {
+Vertex lightVertices[] = {
     // Vert coord
-    -0.1f, -0.1f,  0.1f,
-    -0.1f, -0.1f, -0.1f,
-     0.1f, -0.1f, -0.1f,
-     0.1f, -0.1f,  0.1f,
-    -0.1f,  0.1f,  0.1f,
-    -0.1f,  0.1f, -0.1f,
-     0.1f,  0.1f, -0.1f,
-     0.1f,  0.1f,  0.1f
+    Vertex{glm::vec3(-0.1f, -0.1f,  0.1f)},
+    Vertex{glm::vec3(-0.1f, -0.1f, -0.1f)},
+    Vertex{glm::vec3(0.1f, -0.1f, -0.1f)},
+    Vertex{glm::vec3(0.1f, -0.1f,  0.1f)},
+    Vertex{glm::vec3(-0.1f,  0.1f,  0.1f)},
+    Vertex{glm::vec3(-0.1f,  0.1f, -0.1f)},
+    Vertex{glm::vec3(0.1f,  0.1f, -0.1f)},
+    Vertex{glm::vec3(0.1f,  0.1f,  0.1f)}
 };
 
 GLuint lightIndices[] = {
@@ -79,32 +79,25 @@ int App::loop() {
     Shader defaultShader("Shaders/default.vert", "Shaders/default.frag");
     Shader lightShader("Shaders/light.vert", "Shaders/light.frag");
 
-    // Generates VAO and bind
-    VAO VAO1;
-    VAO1.Bind();
+    // Textures
+    Texture textures[] = {
+        Texture("Textures/texWoodFloor.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
+        Texture("Textures/texWoodFloorDisp.png", "specular", 1, GL_RED, GL_UNSIGNED_BYTE)
+    };
 
-    // Generates VBO and EBO and link to vert array, the link VAO to VBO
-    VBO VBO1(vertices, sizeof(vertices));
-    EBO EBO1(indices, sizeof(indices));
-    // VBO / slot num / vec? / type / sizeof(float) * how long a line is (e.g. 3, 8 args), cast
-    VAO1.LinkAttrib(VBO1, 0, 3, GL_FLOAT, 8 * sizeof(float), (void*)0);
-    VAO1.LinkAttrib(VBO1, 1, 2, GL_FLOAT, 8 * sizeof(float), (void*)(3 * sizeof(float))); // 3 -> vec3 in prev
-    VAO1.LinkAttrib(VBO1, 2, 3, GL_FLOAT, 8 * sizeof(float), (void*)(5 * sizeof(float))); // 3+2 -> vec2 in prev
-
-    // Unbind all to prevent accidentally modifying them
-    VAO1.Unbind();
-    VBO1.Unbind();
-    EBO1.Unbind();
+    // Meshes //
+    // Floor
+    std::vector <Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
+    std::vector <GLuint> ind(indices, indices + sizeof(indices) / sizeof(GLuint));
+    std::vector <Texture> tex(textures, textures + sizeof(textures) / sizeof(Texture));
+    Mesh floor(verts, ind, tex);
 
     // Repeat for Light VAO, VBO, EBO
-    VAO lightVAO;
-    lightVAO.Bind();
-    VBO lightVBO(lightVertices, sizeof(lightVertices));
-    EBO lightEBO(lightIndices, sizeof(lightIndices));
-    lightVAO.LinkAttrib(lightVBO, 0, 3, GL_FLOAT, 3 * sizeof(float), (void*)0);
-    lightVAO.Unbind();
-    lightVBO.Unbind();
-    lightEBO.Unbind();
+    std::vector <Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
+    std::vector <GLuint> lightInd(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(GLuint));
+    // Use same tex since we don't care about light textures
+    Mesh light(lightVerts, lightInd, tex);
+
 
     // Model Translations
     glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -115,12 +108,6 @@ int App::loop() {
     glm::vec3 subjectPos = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::mat4 subjectModel = glm::mat4(1.0f);
     subjectModel = glm::translate(subjectModel, subjectPos);
-
-    // Textures
-    Texture woodTex("Textures/texWoodFloor.png", GL_TEXTURE_2D, 0, GL_RGBA, GL_UNSIGNED_BYTE);
-    woodTex.assignTexUnit(defaultShader, "tex0", 0);
-    Texture woodDispTex("Textures/texWoodFloorDisp.png", GL_TEXTURE_2D, 1, GL_RED, GL_UNSIGNED_BYTE);
-    woodDispTex.assignTexUnit(defaultShader, "tex1", 1);
 
     // Uniforms
     GLuint uniTime = glGetUniformLocation(defaultShader.ID, "iTime");
@@ -143,29 +130,17 @@ int App::loop() {
         // Rendering Commands
         glClearColor(0.0f, 0.05f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        defaultShader.Activate();
         
         // Camera
         camera.Inputs(currWindow);
         camera.updateMatrix(45.0f, 0.1f, 100.0f);
-        camera.Matrix(defaultShader, "camMatrix");
-        GLuint camPosLoc = glGetUniformLocation(defaultShader.ID, "camPos");
-        glUniform3f(camPosLoc, camera.Position.x, camera.Position.y, camera.Position.z);
+
+        // Render meshes
+        floor.Draw(defaultShader, camera);
+		light.Draw(lightShader, camera);
 
         // Uniforms
         glUniform1f(uniTime, glfwGetTime());
-        woodTex.Bind();
-        woodDispTex.Bind();
-        VAO1.Bind();
-        
-        // Draw our wall model
-        glDrawElements(GL_TRIANGLES, sizeof(indices)/sizeof(int), GL_UNSIGNED_INT, 0);
-
-        // Lighting
-        lightShader.Activate();
-        camera.Matrix(lightShader, "camMatrix");
-        lightVAO.Bind();
-        glDrawElements(GL_TRIANGLES, sizeof(lightIndices) / sizeof(int), GL_UNSIGNED_INT, 0);
 
         // Swap colour buffer & check if any events are triggered (e.g. keyboard or mouse input)
         glfwSwapBuffers(currWindow);
@@ -173,15 +148,7 @@ int App::loop() {
     }
 
     // Cleanup
-    VAO1.Delete();
-    VBO1.Delete();
-    EBO1.Delete();
-    woodTex.Delete();
-    woodDispTex.Delete();
     defaultShader.Delete();
-    lightVAO.Delete();
-    lightVBO.Delete();
-    lightEBO.Delete();
     lightShader.Delete();
     glfwTerminate();
     return 0;
