@@ -5,11 +5,11 @@
 
 
 Vertex vertices[] = {
-    // Vert Coord // Normals // Tex Coord
-    Vertex{glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
-    Vertex{glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(0.0f, 1.0f)},
-    Vertex{glm::vec3(1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 1.0f)},
-    Vertex{glm::vec3(1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec2(1.0f, 0.0f)}
+    // Vert Coord // Normals // Colour // Tex Coord
+    Vertex{glm::vec3(-1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
+    Vertex{glm::vec3(-1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)},
+    Vertex{glm::vec3(1.0f, 0.0f, -1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f)},
+    Vertex{glm::vec3(1.0f, 0.0f,  1.0f), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)}
 };
 GLuint indices[] = {  
     0, 1, 2,
@@ -42,6 +42,7 @@ GLuint lightIndices[] = {
     4, 5, 6,
     4, 6, 7
 };
+
 
 // Constructor (init variables)
 App::App() {
@@ -79,10 +80,11 @@ int App::loop() {
     Shader defaultShader("Shaders/default.vert", "Shaders/default.frag");
     Shader lightShader("Shaders/light.vert", "Shaders/light.frag");
 
+
     // Textures
     Texture textures[] = {
-        Texture("Textures/texWoodFloor.png", "diffuse", 0, GL_RGBA, GL_UNSIGNED_BYTE),
-        Texture("Textures/texWoodFloorDisp.png", "specular", 1, GL_RED, GL_UNSIGNED_BYTE)
+        Texture("Textures/texWoodFloor.png", "diffuse", 0),
+        Texture("Textures/texWoodFloorDisp.png", "specular", 1)
     };
 
     // Meshes //
@@ -91,7 +93,7 @@ int App::loop() {
     std::vector <GLuint> ind(indices, indices + sizeof(indices) / sizeof(GLuint));
     std::vector <Texture> tex(textures, textures + sizeof(textures) / sizeof(Texture));
     Mesh floor(verts, ind, tex);
-
+    
     // Repeat for Light VAO, VBO, EBO
     std::vector <Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
     std::vector <GLuint> lightInd(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(GLuint));
@@ -105,22 +107,28 @@ int App::loop() {
     glm::mat4 lightModel = glm::mat4(1.0f);
     lightModel = glm::translate(lightModel, lightPos);
 
+
     glm::vec3 subjectPos = glm::vec3(0.0f, 0.0f, 0.0f);
     glm::mat4 subjectModel = glm::mat4(1.0f);
-    subjectModel = glm::translate(subjectModel, subjectPos);
+
 
     // Uniforms
     GLuint uniTime = glGetUniformLocation(defaultShader.ID, "iTime");
+
     lightShader.Activate();
     glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
     glUniform4f(glGetUniformLocation(lightShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
+
     defaultShader.Activate();
-    glUniformMatrix4fv(glGetUniformLocation(defaultShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(subjectModel));
+    //glUniformMatrix4fv(glGetUniformLocation(defaultShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(subjectModel));
     glUniform4f(glGetUniformLocation(defaultShader.ID, "lightColour"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
     glUniform3f(glGetUniformLocation(defaultShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
     // Camera
     Camera camera(WINDOWWIDTH, WINDOWHEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
+
+    // Importing models
+    //Model model("Models/Bunny/scene.gltf");
 
     // Render loop
     glEnable(GL_DEPTH_TEST);
@@ -135,9 +143,9 @@ int App::loop() {
         camera.Inputs(currWindow);
         camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
-        // Render meshes
-        floor.Draw(defaultShader, camera);
-		light.Draw(lightShader, camera);
+        // Render meshes and models
+        floor.draw(defaultShader, camera);
+		light.draw(lightShader, camera);
 
         // Uniforms
         glUniform1f(uniTime, glfwGetTime());

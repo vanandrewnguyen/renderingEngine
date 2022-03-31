@@ -153,6 +153,7 @@
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="mesh.cpp" />
+    <ClCompile Include="model.cpp" />
     <ClCompile Include="Shaders\shaderClass.cpp" />
     <ClCompile Include="stb.cpp" />
     <ClCompile Include="texture.cpp" />
@@ -164,18 +165,23 @@
     <ClInclude Include="camera.hpp" />
     <ClInclude Include="EBO.hpp" />
     <ClInclude Include="mesh.hpp" />
+    <ClInclude Include="model.hpp" />
     <ClInclude Include="Shaders\shaderClass.hpp" />
     <ClInclude Include="texture.hpp" />
     <ClInclude Include="VAO.hpp" />
     <ClInclude Include="VBO.hpp" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Models\Bunny\scene.bin" />
+    <None Include="Models\Bunny\scene.gltf" />
     <None Include="Shaders\default.frag" />
     <None Include="Shaders\default.vert" />
     <None Include="Shaders\light.frag" />
     <None Include="Shaders\light.vert" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="Models\Bunny\baseColor.png" />
+    <Image Include="Models\Bunny\metallicRoughness.png" />
     <Image Include="Textures\texBrickWall.png" />
     <Image Include="Textures\texWoodFloor.png" />
     <Image Include="Textures\texWoodFloorDisp.png" />
