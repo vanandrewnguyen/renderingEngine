@@ -4,6 +4,7 @@ out vec4 FragColor;
 // Has to be in the same order as in vert. shd
 in vec3 currentPos;
 in vec3 surfNormal;
+in vec3 vertColour;
 in vec2 texCoord;
 
 uniform float iTime;
@@ -89,6 +90,6 @@ void main() {
     vec3 lightDir = normalize(lightPos - currentPos);
 
     // Lighting
-    vec3 col = getPointLight(ambient, normal, lightDir);
+    vec3 col = getPointLight(ambient, normal, lightDir) * vertColour;
     FragColor = vec4(col, 1.0);
 } 

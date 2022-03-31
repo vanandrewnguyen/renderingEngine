@@ -19,6 +19,12 @@
     <Filter Include="Source Files\Textures">
       <UniqueIdentifier>{20d13310-a404-4243-8360-5e159c6ef5a5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Models">
+      <UniqueIdentifier>{528d6949-f7e1-4f8f-9ebd-a055ae1b6e58}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Models\Bunny">
+      <UniqueIdentifier>{88610682-8595-4eca-87f8-4a54ead38afc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -54,6 +60,9 @@
     <ClCompile Include="mesh.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="model.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app.hpp">
@@ -80,6 +89,9 @@
     <ClInclude Include="mesh.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="model.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\default.vert">
@@ -94,6 +106,12 @@
     <None Include="Shaders\light.vert">
       <Filter>Source Files\Shaders</Filter>
     </None>
+    <None Include="Models\Bunny\scene.bin">
+      <Filter>Source Files\Models\Bunny</Filter>
+    </None>
+    <None Include="Models\Bunny\scene.gltf">
+      <Filter>Source Files\Models\Bunny</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\texBrickWall.png">
@@ -104,6 +122,12 @@
     </Image>
     <Image Include="Textures\texWoodFloorDisp.png">
       <Filter>Source Files\Textures</Filter>
+    </Image>
+    <Image Include="Models\Bunny\baseColor.png">
+      <Filter>Source Files\Models\Bunny</Filter>
+    </Image>
+    <Image Include="Models\Bunny\metallicRoughness.png">
+      <Filter>Source Files\Models\Bunny</Filter>
     </Image>
   </ItemGroup>
 </Project>
