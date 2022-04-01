@@ -8,7 +8,7 @@ Boilerplate Features
 
 - [x] 3D Projection and Camera Movement
 - [x] Custom texture mapping
-- [x] Diffuse lighting
+- [x] Phong lighting
 - [ ] Multiple Lights
 - [ ] Geometry Shader
 - [ ] Compute Shader
