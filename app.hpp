@@ -1,7 +1,7 @@
 #ifndef APP_H
 #define APP_H
 
-#include "mesh.hpp"
+#include "model.hpp" // mesh.hpp
 
 class App {
 public:

@@ -9,6 +9,7 @@ Model::Model(const char* file) {
 	Model::file = file;
 	data = getData();
 
+	// Start node traversal 
 	traverseNode(0);
 }
 
@@ -18,10 +19,105 @@ void Model::draw(Shader& shader, Camera& camera) {
 	}
 }
 
+void Model::loadMesh(unsigned int meshIndex) {
+	// Get all accessor indices
+	unsigned int posAccInd = JSON["meshes"][meshIndex]["primitives"][0]["attributes"]["POSITION"];
+	unsigned int normalAccInd = JSON["meshes"][meshIndex]["primitives"][0]["attributes"]["NORMAL"];
+	unsigned int texAccInd = JSON["meshes"][meshIndex]["primitives"][0]["attributes"]["TEXCOORD_0"];
+	unsigned int indAccInd = JSON["meshes"][meshIndex]["primitives"][0]["indices"];
+
+	// Use accessor indices to get all vertices components
+	std::vector<float> posVec = getFloats(JSON["accessors"][posAccInd]);
+	std::vector<glm::vec3> positions = groupFloatsVec3(posVec);
+	std::vector<float> normalVec = getFloats(JSON["accessors"][normalAccInd]);
+	std::vector<glm::vec3> normals = groupFloatsVec3(normalVec);
+	std::vector<float> texVec = getFloats(JSON["accessors"][texAccInd]);
+	std::vector<glm::vec2> texUVs = groupFloatsVec2(texVec);
+
+	// Combine all the vertex components and also get the indices and textures
+	std::vector<Vertex> vertices = assembleVertices(positions, normals, texUVs);
+	std::vector<GLuint> indices = getIndices(JSON["accessors"][indAccInd]);
+	std::vector<Texture> textures = getTextures();
+
+	// Combine the vertices, indices, and textures into a mesh
+	meshes.push_back(Mesh(vertices, indices, textures));
+}
+
+
+void Model::traverseNode(unsigned int nextNode, glm::mat4 matrix) {
+	// Current node
+	json node = JSON["nodes"][nextNode];
+
+	// Get translation if it exists
+	glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f);
+	if (node.find("translation") != node.end()) {
+		float transValues[3];
+		for (unsigned int i = 0; i < node["translation"].size(); i++)
+			transValues[i] = (node["translation"][i]);
+		translation = glm::make_vec3(transValues);
+	}
+	// Get quaternion if it exists
+	glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
+	if (node.find("rotation") != node.end()) {
+		float rotValues[4] = {
+			node["rotation"][3], // gltf makes quaternions as xyzw, glm uses them as wxyz
+			node["rotation"][0],
+			node["rotation"][1],
+			node["rotation"][2]
+		};
+		rotation = glm::make_quat(rotValues);
+	}
+	// Get scale if it exists
+	glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
+	if (node.find("scale") != node.end()) {
+		float scaleValues[3];
+		for (unsigned int i = 0; i < node["scale"].size(); i++)
+			scaleValues[i] = (node["scale"][i]);
+		scale = glm::make_vec3(scaleValues);
+	}
+	// Get matrix if it exists
+	glm::mat4 matNode = glm::mat4(1.0f);
+	if (node.find("matrix") != node.end()) {
+		float matValues[16];
+		for (unsigned int i = 0; i < node["matrix"].size(); i++)
+			matValues[i] = (node["matrix"][i]);
+		matNode = glm::make_mat4(matValues);
+	}
+
+	// Initialize matrices
+	glm::mat4 trans = glm::mat4(1.0f);
+	glm::mat4 rot = glm::mat4(1.0f);
+	glm::mat4 sca = glm::mat4(1.0f);
+
+	// Use translation, rotation, and scale to change the initialized matrices
+	trans = glm::translate(trans, translation);
+	rot = glm::mat4_cast(rotation);
+	sca = glm::scale(sca, scale);
+
+	// Multiply all matrices together
+	glm::mat4 matNextNode = matrix * matNode * trans * rot * sca;
+
+	// Check if the node contains a mesh and if it does load it
+	if (node.find("mesh") != node.end()) {
+		translationsMeshes.push_back(translation);
+		rotationsMeshes.push_back(rotation);
+		scalesMeshes.push_back(scale);
+		matricesMeshes.push_back(matNextNode);
+
+		loadMesh(node["mesh"]);
+	}
+
+	// Check if the node has children, and if it does, apply this function to them with the matNextNode
+	if (node.find("children") != node.end()) {
+		for (unsigned int i = 0; i < node["children"].size(); i++)
+			traverseNode(node["children"][i], matNextNode);
+	}
+}
+
 std::vector<unsigned char> Model::getData() {
 	// Getting file location
 	std::string bytesStr;
-	std::string fileLoc = JSON["buffer"][0]["uri"];
+	std::string fileLoc = JSON["buffers"][0]["uri"];
 
 	// Grab text and return it
 	std::string fileStr = std::string(file);
@@ -31,6 +127,8 @@ std::vector<unsigned char> Model::getData() {
 	// Transform the raw text data into bytes and put them in a vector
 	std::vector<unsigned char> data(bytesStr.begin(), bytesStr.end());
 	return data;
+
+	
 }
 
 std::vector<float> Model::getFloats(json accessor) {
@@ -158,100 +256,6 @@ std::vector<Texture> Model::getTextures() {
 	}
 
 	return textures;
-}
-
-void Model::traverseNode(unsigned int nextNode, glm::mat4 matrix) {
-	// Current node
-	json node = JSON["nodes"][nextNode];
-
-	// Get translation if it exists
-	glm::vec3 translation = glm::vec3(0.0f, 0.0f, 0.0f);
-	if (node.find("translation") != node.end()) {
-		float transValues[3];
-		for (unsigned int i = 0; i < node["translation"].size(); i++)
-			transValues[i] = (node["translation"][i]);
-		translation = glm::make_vec3(transValues);
-	}
-	// Get quaternion if it exists
-	glm::quat rotation = glm::quat(1.0f, 0.0f, 0.0f, 0.0f);
-	if (node.find("rotation") != node.end()) {
-		float rotValues[4] = {
-			node["rotation"][3], // gltf makes quaternions as xyzw, glm uses them as wxyz
-			node["rotation"][0],
-			node["rotation"][1],
-			node["rotation"][2]
-		};
-		rotation = glm::make_quat(rotValues);
-	}
-	// Get scale if it exists
-	glm::vec3 scale = glm::vec3(1.0f, 1.0f, 1.0f);
-	if (node.find("scale") != node.end()) {
-		float scaleValues[3];
-		for (unsigned int i = 0; i < node["scale"].size(); i++)
-			scaleValues[i] = (node["scale"][i]);
-		scale = glm::make_vec3(scaleValues);
-	}
-	// Get matrix if it exists
-	glm::mat4 matNode = glm::mat4(1.0f);
-	if (node.find("matrix") != node.end()) {
-		float matValues[16];
-		for (unsigned int i = 0; i < node["matrix"].size(); i++)
-			matValues[i] = (node["matrix"][i]);
-		matNode = glm::make_mat4(matValues);
-	}
-
-	// Initialize matrices
-	glm::mat4 trans = glm::mat4(1.0f);
-	glm::mat4 rot = glm::mat4(1.0f);
-	glm::mat4 sca = glm::mat4(1.0f);
-
-	// Use translation, rotation, and scale to change the initialized matrices
-	trans = glm::translate(trans, translation);
-	rot = glm::mat4_cast(rotation);
-	sca = glm::scale(sca, scale);
-
-	// Multiply all matrices together
-	glm::mat4 matNextNode = matrix * matNode * trans * rot * sca;
-
-	// Check if the node contains a mesh and if it does load it
-	if (node.find("mesh") != node.end()) {
-		translationsMeshes.push_back(translation);
-		rotationsMeshes.push_back(rotation);
-		scalesMeshes.push_back(scale);
-		matricesMeshes.push_back(matNextNode);
-
-		loadMesh(node["mesh"]);
-	}
-
-	// Check if the node has children, and if it does, apply this function to them with the matNextNode
-	if (node.find("children") != node.end()) {
-		for (unsigned int i = 0; i < node["children"].size(); i++)
-			traverseNode(node["children"][i], matNextNode);
-	}
-}
-
-void Model::loadMesh(unsigned int meshIndex) {
-	// Get all accessor indices
-	unsigned int posAccInd = JSON["meshes"][meshIndex]["primitives"][0]["attributes"]["POSITION"];
-	unsigned int normalAccInd = JSON["meshes"][meshIndex]["primitives"][0]["attributes"]["NORMAL"];
-	unsigned int texAccInd = JSON["meshes"][meshIndex]["primitives"][0]["attributes"]["TEXCOORD_0"];
-	unsigned int indAccInd = JSON["meshes"][meshIndex]["primitives"][0]["indices"];
-
-	// Use accessor indices to get all vertices components
-	std::vector<float> posVec = getFloats(JSON["accessors"][posAccInd]);
-	std::vector<glm::vec3> positions = groupFloatsVec3(posVec);
-	std::vector<float> normalVec = getFloats(JSON["accessors"][normalAccInd]);
-	std::vector<glm::vec3> normals = groupFloatsVec3(normalVec);
-	std::vector<float> texVec = getFloats(JSON["accessors"][texAccInd]);
-	std::vector<glm::vec2> texUVs = groupFloatsVec2(texVec);
-
-	// Combine all the vertex components and also get the indices and textures
-	std::vector<Vertex> vertices = assembleVertices(positions, normals, texUVs);
-	std::vector<GLuint> indices = getIndices(JSON["accessors"][indAccInd]);
-	std::vector<Texture> textures = getTextures();
-
-	// Combine the vertices, indices, and textures into a mesh
-	meshes.push_back(Mesh(vertices, indices, textures));
 }
 
 std::vector<Vertex> Model::assembleVertices(std::vector<glm::vec3> positions, std::vector<glm::vec3> normals, std::vector<glm::vec2> texUVs) {

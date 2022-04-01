@@ -22,7 +22,7 @@
     <Filter Include="Source Files\Models">
       <UniqueIdentifier>{528d6949-f7e1-4f8f-9ebd-a055ae1b6e58}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Models\Bunny">
+    <Filter Include="Source Files\Models\bunny">
       <UniqueIdentifier>{88610682-8595-4eca-87f8-4a54ead38afc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -107,10 +107,10 @@
       <Filter>Source Files\Shaders</Filter>
     </None>
     <None Include="Models\Bunny\scene.bin">
-      <Filter>Source Files\Models\Bunny</Filter>
+      <Filter>Source Files\Models\bunny</Filter>
     </None>
     <None Include="Models\Bunny\scene.gltf">
-      <Filter>Source Files\Models\Bunny</Filter>
+      <Filter>Source Files\Models\bunny</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -124,10 +124,10 @@
       <Filter>Source Files\Textures</Filter>
     </Image>
     <Image Include="Models\Bunny\baseColor.png">
-      <Filter>Source Files\Models\Bunny</Filter>
+      <Filter>Source Files\Models\bunny</Filter>
     </Image>
     <Image Include="Models\Bunny\metallicRoughness.png">
-      <Filter>Source Files\Models\Bunny</Filter>
+      <Filter>Source Files\Models\bunny</Filter>
     </Image>
   </ItemGroup>
 </Project>
