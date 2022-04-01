@@ -17,7 +17,7 @@ Boilerplate Features
 Planned Advanced Features
 --
 
-- [ ] .obj Loading using assimp libraries
+- [x] .gltf Loading using assimp libraries
 - [ ] Multiple texture maps (e.g. spec, normal, diff) 
 - [ ] Advanced materials; PBR (reflections, refractions, diffusion, translucency
 - [ ] Volume rendering; fog, clouds, fur (probably through ray marching)
