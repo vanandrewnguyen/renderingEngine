@@ -6,23 +6,28 @@ I'm attempting to make a rendering engine using the OpenGL API!
 Boilerplate Features
 --
 
+- [x] Triangles!
 - [x] 3D Projection and Camera Movement
 - [x] Custom texture mapping
 - [x] Phong lighting
 - [ ] Multiple Lights
-- [ ] Geometry Shader
-- [ ] Compute Shader
-
+- [ ] Depth Buffer
 
 Planned Advanced Features
 --
 
 - [x] .gltf Loading using assimp libraries
+- [ ] Geometry Shader
+- [ ] Compute Shader
 - [ ] Multiple texture maps (e.g. spec, normal, diff) 
 - [ ] Advanced materials; PBR (reflections, refractions, diffusion, translucency
 - [ ] Volume rendering; fog, clouds, fur (probably through ray marching)
 - [ ] Frame buffer trickery
+- [ ] Instancing
 - [ ] Cube maps
+- [ ] Shadow Mapping
+- [ ] SSAO
+- [ ] Skeletal Animation
 
 The final aim for the project is to flesh out a 3D scene using all the above rendering techniques.
 
