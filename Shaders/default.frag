@@ -25,14 +25,14 @@ float getSpec(float specStrength, vec3 lightDir, vec3 normal, int specPow) {
     return spec;
 }
 
-vec3 getPointLight(float ambient, vec3 normal, vec3 lightDir) {
+vec3 getPointLight(float ambient, vec3 normal, vec3 lightDir, vec3 currLightPos) {
     // This light dims after a certain extent, which is modulated using intensity with the inverse square law.
 	// Lights objects in all directions equally.
 
     vec3 col;
 
     // Light attenuation
-    vec3 lightRay = lightPos - currentPos;
+    vec3 lightRay = currLightPos - currentPos;
     float rayDis = length(lightRay);
     float a = 2.0; // for a approaching 1 and b approaching 0 we have a weaker decay
     float b = 0.5; 
@@ -101,12 +101,16 @@ float computeFogDepth(float depth, float steepness, float offset, float near, fl
 // MAIN ////////////////////////////////////////////////////////////
 
 void main() {
+    // Moving the light
+    vec3 currLightPos = lightPos;
+    currLightPos.y += 0.25;
+    currLightPos.xz += vec2(sin(iTime), cos(iTime)) * 1.0;
+
     // Lighting
     float ambient = 0.1;
     vec3 normal = normalize(surfNormal);
-    vec3 lightDir = normalize(lightPos - currentPos);
+    vec3 lightDir = normalize(currLightPos - currentPos);
 
-    // Lighting
     vec3 col;
 
     // Depth Buffer (simulating fog)
@@ -114,7 +118,14 @@ void main() {
     float far = 16.0;
     float depth = computeFogDepth(gl_FragCoord.z, 0.5, 1.0, near, far);
     vec3 fogCol = vec3(0.8, 0.8, 0.9);
-    col = getPointLight(ambient, normal, lightDir) * vertColour * (1.0 - depth) + (depth * fogCol);
+    col = getPointLight(ambient, normal, lightDir, currLightPos) * vertColour * (1.0 - depth) + (depth * fogCol);
+
+    /* Example of 2d textures on UV
+    vec2 UV = gl_FragCoord.xy * vec2(0.1);
+    float checker = mod(floor(UV.x), 2.0) + mod(floor(UV.y), 2.0);
+    bool isEven = mod(checker, 2.0) == 0.0;
+    col *= (isEven) ? vec3(1.0, 0.0, 0.0) : vec3(1.0);
+    */
 
     // Out
     FragColor = vec4(col, 1.0);
