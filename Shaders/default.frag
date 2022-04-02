@@ -14,6 +14,8 @@ uniform vec4 lightColour;
 uniform vec3 lightPos;
 uniform vec3 camPos;
 
+// LIGHTING ////////////////////////////////////////////////////////////
+
 // Grab specular light based on normal and viewing angle
 float getSpec(float specStrength, vec3 lightDir, vec3 normal, int specPow) {
     vec3 viewDir = normalize(camPos - currentPos);
@@ -62,7 +64,7 @@ vec3 getDirectionalLight(float ambient, vec3 normal, vec3 lightDir) {
     return col;
 }
 
-vec4 spotLight(float ambient, vec3 normal, vec3 lightDir, vec3 spotDir) {
+vec4 getSpotLight(float ambient, vec3 normal, vec3 lightDir, vec3 spotDir) {
 	// This light casts a circle of light.
     vec3 col;
 
@@ -83,6 +85,21 @@ vec4 spotLight(float ambient, vec3 normal, vec3 lightDir, vec3 spotDir) {
     return col;
 }
 
+// MATH ////////////////////////////////////////////////////////////
+
+float computeLinearDepth(float depth, float near, float far) {
+    float linearDepth = (2.0 * near * far) / (far + near - (depth * 2.0 - 1.0) * (far - near));
+    return linearDepth;
+}
+
+float computeFogDepth(float depth, float steepness, float offset, float near, float far) {
+    float zDepth = computeLinearDepth(depth, near, far);
+    float fogDepth = (1 / (1 + exp(-steepness * (zDepth - offset)))); 
+    return fogDepth;
+}
+
+// MAIN ////////////////////////////////////////////////////////////
+
 void main() {
     // Lighting
     float ambient = 0.1;
@@ -90,6 +107,15 @@ void main() {
     vec3 lightDir = normalize(lightPos - currentPos);
 
     // Lighting
-    vec3 col = getPointLight(ambient, normal, lightDir) * vertColour;
+    vec3 col;
+
+    // Depth Buffer (simulating fog)
+    float near = 0.1;
+    float far = 16.0;
+    float depth = computeFogDepth(gl_FragCoord.z, 0.5, 1.0, near, far);
+    vec3 fogCol = vec3(0.8, 0.8, 0.9);
+    col = getPointLight(ambient, normal, lightDir) * vertColour * (1.0 - depth) + (depth * fogCol);
+
+    // Out
     FragColor = vec4(col, 1.0);
 } 
