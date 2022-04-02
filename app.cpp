@@ -133,6 +133,8 @@ int App::loop() {
 
     // Render loop
     glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
+
     while (!glfwWindowShouldClose(currWindow)) {
         handleUserInput(currWindow);
 
