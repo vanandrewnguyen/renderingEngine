@@ -44,6 +44,17 @@ GLuint lightIndices[] = {
 };
 */
 
+Vertex vertices[] = {
+    Vertex{glm::vec3(1.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 0.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
+    Vertex{glm::vec3(1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 1.0f, 0.0f), glm::vec2(0.0f, 0.0f)},
+    Vertex{glm::vec3(-1.0f, -1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
+    Vertex{glm::vec3(-1.0f, 1.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)}
+};
+GLuint indices[] = {  
+    0, 1, 3, 
+    1, 2, 3
+};
+
 // Constructor (init variables)
 App::App() {
 
@@ -78,50 +89,33 @@ int App::loop() {
 
     // Setup shaders
     Shader defaultShader("Shaders/default.vert", "Shaders/default.frag");
-    //Shader lightShader("Shaders/light.vert", "Shaders/light.frag");
+    Shader raymarchingShader("Shaders/raymarch.vert", "Shaders/raymarch.frag");
 
-    /*
     // Textures
     Texture textures[] = {
         Texture("Textures/texWoodFloor.png", "diffuse", 0),
         Texture("Textures/texWoodFloorDisp.png", "specular", 1)
     };
-
     // Meshes //
-    // Floor
+    // Raymarching rect map
     std::vector <Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
     std::vector <GLuint> ind(indices, indices + sizeof(indices) / sizeof(GLuint));
     std::vector <Texture> tex(textures, textures + sizeof(textures) / sizeof(Texture));
-    Mesh floor(verts, ind, tex);
+    Mesh screenMap(verts, ind, tex);
     
-    // Repeat for Light VAO, VBO, EBO
-    std::vector <Vertex> lightVerts(lightVertices, lightVertices + sizeof(lightVertices) / sizeof(Vertex));
-    std::vector <GLuint> lightInd(lightIndices, lightIndices + sizeof(lightIndices) / sizeof(GLuint));
-    // Use same tex since we don't care about light textures
-    Mesh light(lightVerts, lightInd, tex);
-    */
-
     // Model Translations
     glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
-    glm::vec3 lightPos = glm::vec3(0.5f, 0.5f, 0.5f);
+    glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 0.0f); //glm::vec3(0.5f, 0.5f, 0.5f);
     glm::mat4 lightModel = glm::mat4(1.0f);
     lightModel = glm::translate(lightModel, lightPos);
 
-    /*
-    glm::vec3 subjectPos = glm::vec3(0.0f, 0.0f, 0.0f);
-    glm::mat4 subjectModel = glm::mat4(1.0f);
-    subjectModel = glm::translate(subjectModel, subjectPos);
-    */
-
     // Uniforms
+    double timePrev = 0.0;
+    double timeCurr = 0.0;
+    double timeDiff = 0.0;
+    unsigned int counter = 0;
     GLuint uniTime = glGetUniformLocation(defaultShader.ID, "iTime");
-    /*
-    lightShader.Activate();
-    glUniformMatrix4fv(glGetUniformLocation(lightShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(lightModel));
-    glUniform4f(glGetUniformLocation(lightShader.ID, "lightColor"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
-    */
     defaultShader.Activate();
-    //glUniformMatrix4fv(glGetUniformLocation(defaultShader.ID, "model"), 1, GL_FALSE, glm::value_ptr(subjectModel));
     glUniform4f(glGetUniformLocation(defaultShader.ID, "lightColour"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
     glUniform3f(glGetUniformLocation(defaultShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
 
@@ -131,10 +125,15 @@ int App::loop() {
     // Importing models
     Model model("Models/bunny/scene.gltf");
 
-    // Render loop
+    // Depth testing
     glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
 
+    // Face culling
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_FRONT);
+    //glFrontFace(GL_CW); // CW or CCW for counter clockwise, depends on model
+
+    // Render loop
     while (!glfwWindowShouldClose(currWindow)) {
         handleUserInput(currWindow);
 
@@ -147,11 +146,18 @@ int App::loop() {
         camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
         // Render meshes and models
-        //floor.Draw(defaultShader, camera);
-		//light.draw(lightShader, camera, lightModel, lightPos, glm::quat(1.0f, -0.1f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f));
+        //screenMap.draw(raymarchingShader, camera); //save this for later
         model.draw(defaultShader, camera);
 
         // Uniforms
+        timeCurr = glfwGetTime();
+        timeDiff = timeCurr - timePrev;
+        counter++;
+        if (timeDiff >= 1.0 / 30.0) {
+            glfwSetWindowTitle(currWindow, (std::string("Rendering Engine | FPS: " + std::to_string((1.0 / timeDiff) * counter))).c_str());
+            timePrev = timeCurr;
+            counter = 0;
+        }
         glUniform1f(uniTime, glfwGetTime());
 
         // Swap colour buffer & check if any events are triggered (e.g. keyboard or mouse input)
@@ -161,7 +167,7 @@ int App::loop() {
 
     // Cleanup
     defaultShader.Delete();
-    //lightShader.Delete();
+    raymarchingShader.Delete();
     glfwTerminate();
     return 0;
 }
