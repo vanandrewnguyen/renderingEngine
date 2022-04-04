@@ -103,8 +103,8 @@ float computeFogDepth(float depth, float steepness, float offset, float near, fl
 void main() {
     // Moving the light
     vec3 currLightPos = lightPos;
-    currLightPos.y += 0.25;
-    currLightPos.xz += vec2(sin(iTime), cos(iTime)) * 1.0;
+    currLightPos.x += 0.5;
+    currLightPos.yz += vec2(sin(iTime), cos(iTime)) * 1.0;
 
     // Lighting
     float ambient = 0.1;
@@ -120,8 +120,9 @@ void main() {
     vec3 fogCol = vec3(0.8, 0.8, 0.9);
     col = getPointLight(ambient, normal, lightDir, currLightPos) * vertColour * (1.0 - depth) + (depth * fogCol);
 
-    /* Example of 2d textures on UV
-    vec2 UV = gl_FragCoord.xy * vec2(0.1);
+    //Example of 2d textures on UV
+    /*
+    vec2 UV = gl_FragCoord.xy * vec2(0.5);
     float checker = mod(floor(UV.x), 2.0) + mod(floor(UV.y), 2.0);
     bool isEven = mod(checker, 2.0) == 0.0;
     col *= (isEven) ? vec3(1.0, 0.0, 0.0) : vec3(1.0);

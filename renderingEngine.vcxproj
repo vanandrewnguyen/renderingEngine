@@ -176,6 +176,8 @@
     <None Include="Models\Bunny\scene.gltf" />
     <None Include="Shaders\default.frag" />
     <None Include="Shaders\default.vert" />
+    <None Include="Shaders\framebuffer.frag" />
+    <None Include="Shaders\framebuffer.vert" />
     <None Include="Shaders\light.frag" />
     <None Include="Shaders\light.vert" />
     <None Include="Shaders\raymarch.frag" />
