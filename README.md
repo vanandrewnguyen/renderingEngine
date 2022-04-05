@@ -22,7 +22,7 @@ Planned Advanced Features
 - [x] Multiple texture maps (e.g. spec, normal, diff) 
 - [ ] Advanced materials; PBR (reflections, refractions, diffusion, translucency
 - [ ] Volume rendering; fog, clouds, fur (probably through ray marching)
-- [x] Frame buffer trickery (current effects: colour manipulation, edge detection)
+- [x] Frame buffer trickery (current effects: colour manipulation, edge detection, TODO: bloom, depth of field, kuwahara blur)
 - [ ] Instancing
 - [ ] Cube maps
 - [ ] Shadow Mapping
