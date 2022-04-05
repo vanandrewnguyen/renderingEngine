@@ -18,9 +18,29 @@ vec2 offset[9] = vec2[] (
 
 // With kernals, you'd want them to add up to 1. If it's more than 1 the final output will be brighter, vice versa with <1
 float kernal[9] = float[](
+	/* Edge detection
 	1,  1, 1,
     1, -8, 1,
     1,  1, 1
+	*/
+	/* Sharpness
+	0, -1, 0,
+	-1, 5, -1,
+	0, -1, 0
+	*/
+	/* Strange VHS Grain
+	-2, -1, 0,
+	-1, 1, 1,
+	0, 1, 2
+	*/
+	/* Blur
+	1.0 / 16, 2.0 / 16, 1.0 / 16,
+    2.0 / 16, 4.0 / 16, 2.0 / 16,
+    1.0 / 16, 2.0 / 16, 1.0 / 16  
+	*/
+	0, 0, 0,
+	0, 1, 0,
+	0, 0, 0
 );
 
 void main() {
