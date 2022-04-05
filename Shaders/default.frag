@@ -34,8 +34,8 @@ vec3 getPointLight(float ambient, vec3 normal, vec3 lightDir, vec3 currLightPos)
     // Light attenuation
     vec3 lightRay = currLightPos - currentPos;
     float rayDis = length(lightRay);
-    float a = 2.0; // for a approaching 1 and b approaching 0 we have a weaker decay
-    float b = 0.5; 
+    float a = 1.0; // for a approaching 1 and b approaching 0 we have a weaker decay
+    float b = 0.25; 
     float intensity = 1.0 / (a * rayDis * rayDis + b * rayDis + 1.0);
     lightDir = normalize(lightRay);
 
@@ -114,10 +114,10 @@ void main() {
     vec3 col;
 
     // Depth Buffer (simulating fog)
-    float near = 0.1;
-    float far = 16.0;
+    float near = 0.2;
+    float far = 32.0;
     float depth = computeFogDepth(gl_FragCoord.z, 0.5, 1.0, near, far);
-    vec3 fogCol = vec3(0.8, 0.8, 0.9);
+    vec3 fogCol = vec3(0.0, 0.05, 0.1);
     col = getPointLight(ambient, normal, lightDir, currLightPos) * vertColour * (1.0 - depth) + (depth * fogCol);
 
     //Example of 2d textures on UV

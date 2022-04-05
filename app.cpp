@@ -45,7 +45,7 @@ GLuint lightIndices[] = {
 */
 
 // Frame buffer vert + indicies (rect with no transforms)
-float rectangleVertices[] = {
+float frameVert[] = {
     // Coords    // texCoords
     1.0f, -1.0f, 1.0f, 0.0f,
     -1.0f, -1.0f, 0.0f, 0.0f,
@@ -54,7 +54,7 @@ float rectangleVertices[] = {
     1.0f,  1.0f, 1.0f, 1.0f,
     1.0f, -1.0f, 1.0f, 0.0f,
     -1.0f,  1.0f, 0.0f, 1.0f
-};
+}; 
 
 // Constructor (init variables)
 App::App() {
@@ -91,12 +91,12 @@ int App::loop() {
     // Setup shaders
     Shader defaultShader("Shaders/default.vert", "Shaders/default.frag");
     Shader framebufferShader("Shaders/framebuffer.vert", "Shaders/framebuffer.frag");
-
+    /*
     // Textures
     Texture textures[] = {
         Texture("Textures/texWoodFloor.png", "diffuse", 0),
         Texture("Textures/texWoodFloorDisp.png", "specular", 1)
-    };
+    }; */
     // Meshes //
     // Importing models
     Model model("Models/bunny/scene.gltf");
@@ -117,16 +117,18 @@ int App::loop() {
     glUniform4f(glGetUniformLocation(defaultShader.ID, "lightColour"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
     glUniform3f(glGetUniformLocation(defaultShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
     framebufferShader.Activate();
-    glUniform1i(glGetUniformLocation(framebufferShader.ID, "screenTex"), 0);
+    glUniform1i(glGetUniformLocation(framebufferShader.ID, "screenTexture"), 1); // bruh wtf it's supposed to be 0??
+    glUniform1f(glGetUniformLocation(framebufferShader.ID, "screenWidth"), WINDOWWIDTH);
+    glUniform1f(glGetUniformLocation(framebufferShader.ID, "screenHeight"), WINDOWHEIGHT);
 
     // Camera
     Camera camera(WINDOWWIDTH, WINDOWHEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
 
     // Face culling
     glEnable(GL_DEPTH_TEST);
-    glEnable(GL_CULL_FACE);
-    glCullFace(GL_FRONT);
-    glFrontFace(GL_CW); // CW or CCW for counter clockwise, depends on model
+    //glEnable(GL_CULL_FACE);
+    //glCullFace(GL_FRONT);
+    //glFrontFace(GL_CW); // CW or CCW for counter clockwise, depends on model
 
     // Frame Rect VAO VBO
     unsigned int rectVAO, rectVBO;
@@ -134,7 +136,7 @@ int App::loop() {
     glGenBuffers(1, &rectVBO);
     glBindVertexArray(rectVAO);
     glBindBuffer(GL_ARRAY_BUFFER, rectVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(rectangleVertices), &rectangleVertices, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(frameVert), &frameVert, GL_STATIC_DRAW);
     glEnableVertexAttribArray(0);
     glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
     glEnableVertexAttribArray(1);
@@ -165,7 +167,7 @@ int App::loop() {
     if (FBOError != GL_FRAMEBUFFER_COMPLETE) {
         std::cout << "Framebuffer error: " << FBOError << std::endl;
     }
-
+    
     // Render loop
     while (!glfwWindowShouldClose(currWindow)) {
         handleUserInput(currWindow);
@@ -174,17 +176,22 @@ int App::loop() {
         glBindFramebuffer(GL_FRAMEBUFFER, FBO);
         glClearColor(0.0f, 0.05f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // Depth testing ON before rendering frame buffer
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_FRONT);
+        glFrontFace(GL_CW); // CW or CCW for counter clockwise, depends on model
 
         // Camera
         camera.Inputs(currWindow);
         camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
         // Render meshes and models
-        //screenMap.draw(raymarchingShader, camera); //save this for later
         model.draw(defaultShader, camera);
 
         // Uniforms
+
         timeCurr = glfwGetTime();
         timeDiff = timeCurr - timePrev;
         counter++;
@@ -196,10 +203,11 @@ int App::loop() {
         glUniform1f(uniTime, glfwGetTime());
 
         // Bind to FBO and compute post processing effects
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0); // default by binding 0
         framebufferShader.Activate();
         glBindVertexArray(rectVAO);
-        glDisable(GL_DEPTH_TEST); // prevents framebuffer rectangle from being discarded
+        glDisable(GL_DEPTH_TEST); 
+        glDisable(GL_CULL_FACE);
         glBindTexture(GL_TEXTURE_2D, fbTex);
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
