@@ -11,7 +11,7 @@ Boilerplate Features
 - [x] Custom texture mapping
 - [x] Phong lighting
 - [ ] Multiple Lights
-- [ ] Depth Buffer
+- [x] Depth Buffer
 
 Planned Advanced Features
 --
@@ -19,7 +19,7 @@ Planned Advanced Features
 - [x] .gltf Loading using assimp libraries
 - [ ] Geometry Shader
 - [ ] Compute Shader
-- [ ] Multiple texture maps (e.g. spec, normal, diff) 
+- [x] Multiple texture maps (e.g. spec, normal, diff) 
 - [ ] Advanced materials; PBR (reflections, refractions, diffusion, translucency
 - [ ] Volume rendering; fog, clouds, fur (probably through ray marching)
 - [x] Frame buffer trickery (current effects: colour manipulation, edge detection)
