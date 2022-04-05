@@ -22,7 +22,7 @@ Planned Advanced Features
 - [ ] Multiple texture maps (e.g. spec, normal, diff) 
 - [ ] Advanced materials; PBR (reflections, refractions, diffusion, translucency
 - [ ] Volume rendering; fog, clouds, fur (probably through ray marching)
-- [ ] Frame buffer trickery
+- [x] Frame buffer trickery (current effects: colour manipulation, edge detection)
 - [ ] Instancing
 - [ ] Cube maps
 - [ ] Shadow Mapping
@@ -40,3 +40,10 @@ Phong lighting + texture mapping.
 Model Loading.
 
 ![bunny](https://user-images.githubusercontent.com/53636492/161246861-a5b42ab4-71da-4ad4-b2cd-753ac1c9f614.PNG)
+
+Edge Detection (Post-processing filter).
+
+![edge detection](https://user-images.githubusercontent.com/53636492/161684568-062ef1f2-e11e-4f23-81e5-607e855b11c0.PNG)
+
+
+
