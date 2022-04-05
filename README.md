@@ -46,4 +46,9 @@ Edge Detection (Post-processing filter).
 ![edge detection](https://user-images.githubusercontent.com/53636492/161684568-062ef1f2-e11e-4f23-81e5-607e855b11c0.PNG)
 
 
+Credits
+--
+This work is based on "Stanford Dragon PBR" (https://sketchfab.com/3d-models/stanford-dragon-pbr-5d610f842a4542ccb21613d41bbd7ea1) by hackmans (https://sketchfab.com/hackmans) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+This work is based on "Stanford Bunny PBR" (https://sketchfab.com/3d-models/stanford-bunny-pbr-42c9bdc4d27a418daa19b2d5ff690095) by hackmans (https://sketchfab.com/hackmans) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+
 
