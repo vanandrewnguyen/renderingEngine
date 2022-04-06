@@ -24,7 +24,7 @@ Planned Advanced Features
 - [ ] Volume rendering; fog, clouds, fur (probably through ray marching)
 - [x] Frame buffer trickery (current effects: colour manipulation, edge detection, TODO: bloom, depth of field, kuwahara blur)
 - [ ] Instancing
-- [ ] Cube maps
+- [ ] Cube maps (static + dynamic)
 - [ ] Shadow Mapping
 - [ ] SSAO
 - [ ] Skeletal Animation
