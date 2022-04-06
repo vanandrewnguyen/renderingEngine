@@ -24,7 +24,7 @@ Planned Advanced Features
 - [ ] Volume rendering; fog, clouds, fur (probably through ray marching)
 - [x] Frame buffer trickery (current effects: colour manipulation, edge detection, TODO: bloom, depth of field, kuwahara blur)
 - [ ] Instancing
-- [ ] Cube maps (static + dynamic)
+- [x] Cube maps (static, TODO: dynamic)
 - [ ] Shadow Mapping
 - [ ] SSAO
 - [ ] Skeletal Animation
@@ -39,7 +39,7 @@ Phong lighting + texture mapping.
 
 Model Loading.
 
-![bunny](https://user-images.githubusercontent.com/53636492/161246861-a5b42ab4-71da-4ad4-b2cd-753ac1c9f614.PNG)
+![bunny cube map](https://user-images.githubusercontent.com/53636492/161961294-f9484a60-6a3d-433f-a049-ef14f40e208e.PNG)
 
 Edge Detection (Post-processing filter).
 
