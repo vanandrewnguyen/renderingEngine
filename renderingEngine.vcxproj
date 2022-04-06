@@ -186,6 +186,8 @@
     <None Include="Shaders\light.vert" />
     <None Include="Shaders\raymarch.frag" />
     <None Include="Shaders\raymarch.vert" />
+    <None Include="Shaders\skybox.frag" />
+    <None Include="Shaders\skybox.vert" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Models\Bunny\baseColor.png" />
@@ -193,6 +195,12 @@
     <Image Include="Models\dragon\baseColor.png" />
     <Image Include="Models\dragon\metallicRoughness.png" />
     <Image Include="Models\dragon\normal.png" />
+    <Image Include="Textures\Skyboxes\InteriorBlur\nx.jpg" />
+    <Image Include="Textures\Skyboxes\InteriorBlur\ny.jpg" />
+    <Image Include="Textures\Skyboxes\InteriorBlur\nz.jpg" />
+    <Image Include="Textures\Skyboxes\InteriorBlur\px.jpg" />
+    <Image Include="Textures\Skyboxes\InteriorBlur\py.jpg" />
+    <Image Include="Textures\Skyboxes\InteriorBlur\pz.jpg" />
     <Image Include="Textures\texBrickWall.png" />
     <Image Include="Textures\texWoodFloor.png" />
     <Image Include="Textures\texWoodFloorDisp.png" />
