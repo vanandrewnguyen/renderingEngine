@@ -75,6 +75,9 @@
     <ClCompile Include="FBO.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="cubemap.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app.hpp">
@@ -105,6 +108,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="FBO.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="cubemap.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -180,9 +186,6 @@
     <Image Include="Textures\texBrickWall.png">
       <Filter>Resource Files</Filter>
     </Image>
-    <Image Include="Textures\Skyboxes\InteriorBlur\pz.jpg">
-      <Filter>Source Files\Textures\Skyboxes\InteriorBlur</Filter>
-    </Image>
     <Image Include="Textures\Skyboxes\InteriorBlur\nx.jpg">
       <Filter>Source Files\Textures\Skyboxes\InteriorBlur</Filter>
     </Image>
@@ -196,6 +199,9 @@
       <Filter>Source Files\Textures\Skyboxes\InteriorBlur</Filter>
     </Image>
     <Image Include="Textures\Skyboxes\InteriorBlur\py.jpg">
+      <Filter>Source Files\Textures\Skyboxes\InteriorBlur</Filter>
+    </Image>
+    <Image Include="Textures\Skyboxes\InteriorBlur\pz.jpg">
       <Filter>Source Files\Textures\Skyboxes\InteriorBlur</Filter>
     </Image>
   </ItemGroup>

@@ -149,6 +149,7 @@
   <ItemGroup>
     <ClCompile Include="app.cpp" />
     <ClCompile Include="camera.cpp" />
+    <ClCompile Include="cubemap.cpp" />
     <ClCompile Include="EBO.cpp" />
     <ClCompile Include="FBO.cpp" />
     <ClCompile Include="glad.c" />
@@ -164,6 +165,7 @@
   <ItemGroup>
     <ClInclude Include="app.hpp" />
     <ClInclude Include="camera.hpp" />
+    <ClInclude Include="cubemap.hpp" />
     <ClInclude Include="EBO.hpp" />
     <ClInclude Include="FBO.hpp" />
     <ClInclude Include="mesh.hpp" />

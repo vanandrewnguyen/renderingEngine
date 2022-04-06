@@ -3,6 +3,7 @@
 
 #include "model.hpp" 
 #include "FBO.hpp"
+#include "cubemap.hpp"
 
 class App {
 public:
