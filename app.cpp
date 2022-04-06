@@ -1,8 +1,5 @@
 #include "app.hpp"
 
-#define WINDOWWIDTH 800
-#define WINDOWHEIGHT 800
-
 /*
 Vertex vertices[] = {
     // Vert Coord // Normals // Colour // Tex Coord
@@ -58,7 +55,8 @@ float frameVert[] = {
 
 // Constructor (init variables)
 App::App() {
-
+    windowWidth = 800;
+    windowHeight = 800;
 }
 
 // Main app loop
@@ -71,7 +69,7 @@ int App::loop() {
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 
     // Create a window
-    GLFWwindow* currWindow = glfwCreateWindow(WINDOWWIDTH, WINDOWHEIGHT, "Rendering Engine", NULL, NULL);
+    GLFWwindow* currWindow = glfwCreateWindow(windowWidth, windowHeight, "Rendering Engine", NULL, NULL);
     if (currWindow == NULL) {
         std::cout << "Error: Failed to create a GLFW Window" << std::endl;
         glfwTerminate();
@@ -86,7 +84,7 @@ int App::loop() {
     }
     
     // Set viewport as lower left corner (shading coords)
-    registerNewFramebufferSize(currWindow, WINDOWWIDTH, WINDOWHEIGHT);
+    registerNewFramebufferSize(currWindow, windowWidth, windowHeight);
 
     // Setup shaders
     Shader defaultShader("Shaders/default.vert", "Shaders/default.frag");
@@ -118,17 +116,14 @@ int App::loop() {
     glUniform3f(glGetUniformLocation(defaultShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
     framebufferShader.Activate();
     glUniform1i(glGetUniformLocation(framebufferShader.ID, "screenTexture"), 1); // bruh wtf it's supposed to be 0??
-    glUniform1f(glGetUniformLocation(framebufferShader.ID, "screenWidth"), WINDOWWIDTH);
-    glUniform1f(glGetUniformLocation(framebufferShader.ID, "screenHeight"), WINDOWHEIGHT);
+    glUniform1f(glGetUniformLocation(framebufferShader.ID, "screenWidth"), windowWidth);
+    glUniform1f(glGetUniformLocation(framebufferShader.ID, "screenHeight"), windowHeight);
 
     // Camera
-    Camera camera(WINDOWWIDTH, WINDOWHEIGHT, glm::vec3(0.0f, 0.0f, 2.0f));
+    Camera camera(windowWidth, windowHeight, glm::vec3(0.0f, 0.0f, 2.0f));
 
     // Face culling
     glEnable(GL_DEPTH_TEST);
-    //glEnable(GL_CULL_FACE);
-    //glCullFace(GL_FRONT);
-    //glFrontFace(GL_CW); // CW or CCW for counter clockwise, depends on model
 
     // Frame Rect VAO VBO
     unsigned int rectVAO, rectVBO;
@@ -142,38 +137,14 @@ int App::loop() {
     glEnableVertexAttribArray(1);
     glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
 
-    // Frame Buffers (Bind glObj and create empty tex to use)
-    unsigned int FBO;
-    glGenFramebuffers(1, &FBO);
-    glBindFramebuffer(GL_FRAMEBUFFER, FBO);
-    unsigned int fbTex;
-    glGenTextures(1, &fbTex);
-    glBindTexture(GL_TEXTURE_2D, fbTex);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, WINDOWWIDTH, WINDOWHEIGHT, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, fbTex, 0);
- 
-    // Render Buffer
-    unsigned int RBO;
-    glGenRenderbuffers(1, &RBO);
-    glBindRenderbuffer(GL_RENDERBUFFER, RBO);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, WINDOWWIDTH, WINDOWHEIGHT);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, RBO);
-    // Error checking RBO
-    auto FBOError = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-    if (FBOError != GL_FRAMEBUFFER_COMPLETE) {
-        std::cout << "Framebuffer error: " << FBOError << std::endl;
-    }
-    
+    FBO FBO;
+
     // Render loop
     while (!glfwWindowShouldClose(currWindow)) {
         handleUserInput(currWindow);
 
         // Rendering Commands
-        glBindFramebuffer(GL_FRAMEBUFFER, FBO);
+        FBO.Bind();
         glClearColor(0.0f, 0.05f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -203,12 +174,12 @@ int App::loop() {
         glUniform1f(uniTime, glfwGetTime());
 
         // Bind to FBO and compute post processing effects
-        glBindFramebuffer(GL_FRAMEBUFFER, 0); // default by binding 0
+        FBO.Unbind();
         framebufferShader.Activate();
         glBindVertexArray(rectVAO);
         glDisable(GL_DEPTH_TEST); 
         glDisable(GL_CULL_FACE);
-        glBindTexture(GL_TEXTURE_2D, fbTex);
+        FBO.BindTex();
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         // Swap colour buffer & check if any events are triggered (e.g. keyboard or mouse input)
@@ -219,7 +190,7 @@ int App::loop() {
     // Cleanup
     defaultShader.Delete();
     framebufferShader.Delete();
-    glDeleteFramebuffers(1, &FBO);
+    FBO.Delete();
     glfwTerminate();
     return 0;
 }

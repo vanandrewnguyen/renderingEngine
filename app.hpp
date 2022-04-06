@@ -1,7 +1,8 @@
 #ifndef APP_H
 #define APP_H
 
-#include "model.hpp" // mesh.hpp
+#include "model.hpp" 
+#include "FBO.hpp"
 
 class App {
 public:
@@ -12,6 +13,10 @@ public:
 	int loop();
 	void registerNewFramebufferSize(GLFWwindow* currWindow, int width, int height);
 	void handleUserInput(GLFWwindow* currWindow);
+
+public:
+	int windowHeight;
+	int windowWidth;
 };
 
 #endif 
