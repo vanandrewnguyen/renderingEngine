@@ -58,6 +58,9 @@ int App::loop() {
     }; */
     // Meshes //
     // Importing models
+    Material matDiffuse(0.0f, 1.0f, 0);
+    Material matGlass(0.0f, 1.33f, 1);
+    Material matMetal(1.0f, 1.0f, 0);
     Model model("Models/bunny/scene.gltf");
 
     // Model Translations
@@ -73,6 +76,7 @@ int App::loop() {
     defaultShader.Activate();
     glUniform4f(glGetUniformLocation(defaultShader.ID, "lightColour"), lightColor.x, lightColor.y, lightColor.z, lightColor.w);
     glUniform3f(glGetUniformLocation(defaultShader.ID, "lightPos"), lightPos.x, lightPos.y, lightPos.z);
+    glUniform1i(glGetUniformLocation(defaultShader.ID, "skyboxTex"), 1);
     framebufferShader.Activate();
     glUniform1i(glGetUniformLocation(framebufferShader.ID, "screenTexture"), 1); // bruh wtf it's supposed to be 0??
     glUniform1f(glGetUniformLocation(framebufferShader.ID, "screenWidth"), windowWidth);
@@ -124,7 +128,15 @@ int App::loop() {
         camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
         // Render meshes and models
-        model.draw(defaultShader, camera);
+        //model.draw(defaultShader, camera, matDiffuse);
+        float timeStagger = 2.0;
+        if (int(glfwGetTime() / timeStagger) % 3 == 0) {
+            model.draw(defaultShader, camera, matDiffuse);
+        } else if (int(glfwGetTime() / timeStagger) % 3 == 1) {
+            model.draw(defaultShader, camera, matGlass);
+        } else {
+            model.draw(defaultShader, camera, matMetal);
+        }
 
         // Uniforms
         timeCurr = glfwGetTime();

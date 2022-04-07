@@ -8,12 +8,18 @@ out vec3 currentPos;
 out vec3 surfNormal;
 out vec3 vertColour;
 out vec2 texCoord;
+out float matReflectivity;
+out float matIOR;
+out float matIsTranslucent;
 
 uniform mat4 camMatrix;
 uniform mat4 model;
 uniform mat4 translation;
 uniform mat4 rotation;
 uniform mat4 scale;
+uniform float materialReflectivity;
+uniform float materialIOR;
+uniform int materialIsTranslucent;
 
 void main() {
     // Pass variable to frag
@@ -22,6 +28,9 @@ void main() {
     texCoord = mat2(0.0, -1.0, 1.0, 0.0) * aTex;
     surfNormal = aNormal;
     vertColour = aColour;
+    matReflectivity = materialReflectivity;
+    matIOR = materialIOR;
+    matIsTranslucent = materialIsTranslucent;
 
     // Output vert
     gl_Position = camMatrix * vec4(currentPos, 1.0); 

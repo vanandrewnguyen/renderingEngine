@@ -78,6 +78,9 @@
     <ClCompile Include="cubemap.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="materials.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app.hpp">
@@ -111,6 +114,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="cubemap.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="materials.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -203,6 +209,9 @@
     </Image>
     <Image Include="Textures\Skyboxes\InteriorBlur\pz.jpg">
       <Filter>Source Files\Textures\Skyboxes\InteriorBlur</Filter>
+    </Image>
+    <Image Include="Textures\texBrickWall.png">
+      <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
 </Project>

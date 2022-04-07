@@ -154,6 +154,7 @@
     <ClCompile Include="FBO.cpp" />
     <ClCompile Include="glad.c" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="materials.cpp" />
     <ClCompile Include="mesh.cpp" />
     <ClCompile Include="model.cpp" />
     <ClCompile Include="Shaders\shaderClass.cpp" />
@@ -168,6 +169,7 @@
     <ClInclude Include="cubemap.hpp" />
     <ClInclude Include="EBO.hpp" />
     <ClInclude Include="FBO.hpp" />
+    <ClInclude Include="materials.hpp" />
     <ClInclude Include="mesh.hpp" />
     <ClInclude Include="model.hpp" />
     <ClInclude Include="Shaders\shaderClass.hpp" />

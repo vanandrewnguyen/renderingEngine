@@ -6,6 +6,9 @@ in vec3 currentPos;
 in vec3 surfNormal;
 in vec3 vertColour;
 in vec2 texCoord;
+in float matReflectivity;
+in float matIOR;
+in float matIsTranslucent;
 
 uniform float iTime;
 uniform sampler2D diffuse0;
@@ -13,6 +16,7 @@ uniform sampler2D specular0;
 uniform vec4 lightColour;
 uniform vec3 lightPos;
 uniform vec3 camPos;
+uniform samplerCube skyboxTex;
 
 // LIGHTING ////////////////////////////////////////////////////////////
 
@@ -118,16 +122,28 @@ void main() {
     float far = 32.0;
     float depth = computeFogDepth(gl_FragCoord.z, 0.5, 1.0, near, far);
     vec3 fogCol = vec3(0.0, 0.05, 0.1);
-    col = getPointLight(ambient, normal, lightDir, currLightPos) * vertColour * (1.0 - depth) + (depth * fogCol);
+    vec3 lightPassCol = getPointLight(ambient, normal, lightDir, currLightPos) * vertColour * (1.0 - depth) + (depth * fogCol);
 
-    //Example of 2d textures on UV
-    /*
-    vec2 UV = gl_FragCoord.xy * vec2(0.5);
-    float checker = mod(floor(UV.x), 2.0) + mod(floor(UV.y), 2.0);
-    bool isEven = mod(checker, 2.0) == 0.0;
-    col *= (isEven) ? vec3(1.0, 0.0, 0.0) : vec3(1.0);
-    */
+    // Materials
+    vec3 viewDir = normalize(currentPos - camPos);
+    vec3 sampleDir = reflect(viewDir, normal);
+    // Reflectivity
+    col = (1.0 - matReflectivity) * lightPassCol + matReflectivity * texture(skyboxTex, sampleDir).rgb;
+    // Translucency
+    if (matIsTranslucent == 1) {
+        float ratio = 1.0 / matIOR;
+        sampleDir = refract(viewDir, normal, ratio);
+        col = texture(skyboxTex, sampleDir).rgb;
+    }
 
     // Out
     FragColor = vec4(col, 1.0);
 } 
+
+//Example of 2d textures on UV
+/*
+vec2 UV = gl_FragCoord.xy * vec2(0.5);
+float checker = mod(floor(UV.x), 2.0) + mod(floor(UV.y), 2.0);
+bool isEven = mod(checker, 2.0) == 0.0;
+col *= (isEven) ? vec3(1.0, 0.0, 0.0) : vec3(1.0);
+*/

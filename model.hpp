@@ -3,6 +3,7 @@
 
 #include <json/json.h>
 #include "mesh.hpp"
+#include "materials.hpp"
 
 using json = nlohmann::json;
 
@@ -12,7 +13,7 @@ public:
 	Model(const char* file);
 
 	// Functions
-	void draw(Shader& shader, Camera& camera);
+	void draw(Shader& shader, Camera& camera, Material &mat);
 
 private:
 	std::vector<unsigned char> getData();
