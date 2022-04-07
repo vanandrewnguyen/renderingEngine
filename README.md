@@ -12,6 +12,7 @@ Boilerplate Features
 - [x] Phong lighting
 - [ ] Multiple Lights
 - [x] Depth Buffer
+- [x] Simple Materials
 
 Planned Advanced Features
 --
@@ -20,7 +21,7 @@ Planned Advanced Features
 - [ ] Geometry Shader
 - [ ] Compute Shader
 - [x] Multiple texture maps (e.g. spec, normal, diff) 
-- [ ] Advanced materials; PBR (reflections, refractions, diffusion, translucency
+- [ ] Advanced materials; PBR (dynamic reflections, refractions, diffusion, translucency)
 - [ ] Volume rendering; fog, clouds, fur (probably through ray marching)
 - [x] Frame buffer trickery (current effects: colour manipulation, edge detection, TODO: bloom, depth of field, kuwahara blur)
 - [ ] Instancing
@@ -44,6 +45,10 @@ Model Loading.
 Edge Detection (Post-processing filter).
 
 ![edge detection](https://user-images.githubusercontent.com/53636492/161684568-062ef1f2-e11e-4f23-81e5-607e855b11c0.PNG)
+
+Materials!
+
+![materials](https://user-images.githubusercontent.com/53636492/162161527-b93bce22-d92f-4d77-a7e7-1f06394a02de.gif)
 
 
 Credits
