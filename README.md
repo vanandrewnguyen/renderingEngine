@@ -13,6 +13,7 @@ Boilerplate Features
 - [ ] Multiple Lights
 - [x] Depth Buffer
 - [x] Simple Materials
+- [ ] Anti-aliasing (MSAA)
 
 Planned Advanced Features
 --
