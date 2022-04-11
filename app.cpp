@@ -1,17 +1,5 @@
 #include "app.hpp"
 
-// Frame buffer vert + indicies (rect with no transforms)
-float frameVert[] = {
-    // Coords    // texCoords
-    1.0f, -1.0f, 1.0f, 0.0f,
-    -1.0f, -1.0f, 0.0f, 0.0f,
-    -1.0f,  1.0f, 0.0f, 1.0f,
-
-    1.0f,  1.0f, 1.0f, 1.0f,
-    1.0f, -1.0f, 1.0f, 0.0f,
-    -1.0f,  1.0f, 0.0f, 1.0f
-}; 
-
 // Constructor (init variables)
 App::App() {
     windowWidth = 800;
@@ -90,20 +78,11 @@ int App::loop() {
     // Face culling
     glEnable(GL_DEPTH_TEST);
 
-    // Frame buffer mapped to VAO, VBO
-    unsigned int rectVAO, rectVBO;
-    glGenVertexArrays(1, &rectVAO);
-    glGenBuffers(1, &rectVBO);
-    glBindVertexArray(rectVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, rectVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(frameVert), &frameVert, GL_STATIC_DRAW);
-    glEnableVertexAttribArray(0);
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(1);
-    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+    
 
     // Init frame buffer
-    FBO FBO;
+    FBO postProcessingFBO(false);
+    FBO antiAliasFBO(true);
 
     // Init cubemap for skybox
     Cubemap Skybox;
@@ -113,7 +92,7 @@ int App::loop() {
         handleUserInput(currWindow);
 
         // Rendering Commands
-        FBO.Bind();
+        antiAliasFBO.Bind();
         glClearColor(0.0f, 0.05f, 0.1f, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
@@ -152,13 +131,18 @@ int App::loop() {
         // Drawing the skybox
         Skybox.draw(windowWidth, windowHeight, skyboxShader, camera);
 
+        // Switch fbo's 
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, antiAliasFBO.FBOID);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, postProcessingFBO.FBOID);
+        glBlitFramebuffer(0, 0, windowWidth, windowHeight, 0, 0, windowWidth, windowHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
         // Bind to FBO and compute post processing effects
-        FBO.Unbind();
+        antiAliasFBO.Unbind();
         framebufferShader.Activate();
-        glBindVertexArray(rectVAO);
+        glBindVertexArray(antiAliasFBO.rectVAOID);
         glDisable(GL_DEPTH_TEST); 
         glDisable(GL_CULL_FACE);
-        FBO.BindTex();
+        postProcessingFBO.BindTex();
         glDrawArrays(GL_TRIANGLES, 0, 6);
 
         // Swap colour buffer & check if any events are triggered (e.g. keyboard or mouse input)
@@ -170,7 +154,8 @@ int App::loop() {
     defaultShader.Delete();
     framebufferShader.Delete();
     skyboxShader.Delete();
-    FBO.Delete();
+    postProcessingFBO.Delete();
+    antiAliasFBO.Delete();
     glfwTerminate();
     return 0;
 }

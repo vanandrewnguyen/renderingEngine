@@ -8,7 +8,7 @@
 class FBO {
 public:
 	// Constructor
-	FBO();
+	FBO(bool toggleMSAA);
 
 	// Functions
 	void Bind();
@@ -19,6 +19,8 @@ public:
 	GLuint FBOID;
 	GLuint texID;
 	GLuint RBOID;
+	GLuint rectVAOID;
+	GLuint rectVBOID;
 
 	int windowHeight;
 	int windowWidth;
