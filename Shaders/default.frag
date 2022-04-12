@@ -21,11 +21,19 @@ uniform samplerCube skyboxTex;
 // LIGHTING ////////////////////////////////////////////////////////////
 
 // Grab specular light based on normal and viewing angle
-float getSpec(float specStrength, vec3 lightDir, vec3 normal, int specPow) {
-    vec3 viewDir = normalize(camPos - currentPos);
-	vec3 reflDir = reflect(-lightDir, normal);
-    float specAmount = pow(max(dot(viewDir, reflDir), 0.0), specPow);
-    float spec = specAmount * specStrength;
+float getSpec(float diffuse, float specStrength, vec3 lightDir, vec3 normal, int specPow) {
+    float spec = 0.0;
+
+    if (diffuse != 0.0) {
+        vec3 viewDir = normalize(camPos - currentPos);
+	    vec3 reflDir = reflect(-lightDir, normal);
+    
+        // Blin Phong
+        vec3 midVec = normalize(viewDir + lightDir);
+        float specAmount = pow(max(dot(viewDir, midVec), 0.0), specPow);
+        spec = specAmount * specStrength;
+    }
+
     return spec;
 }
 
@@ -45,7 +53,7 @@ vec3 getPointLight(float ambient, vec3 normal, vec3 lightDir, vec3 currLightPos)
 
     // Phong
     float diff = max(dot(normal, lightDir), 0.0);
-    float spec = getSpec(0.5, lightDir, normal, 16);
+    float spec = getSpec(diff, 0.5, lightDir, normal, 16);
     col = (texture(diffuse0, texCoord) * (diff * intensity + ambient) + 
            texture(specular0, texCoord).r * spec * intensity).rgb * lightColour.rgb;
 
@@ -61,7 +69,7 @@ vec3 getDirectionalLight(float ambient, vec3 normal, vec3 lightDir) {
 
     // Phong
     float diff = max(dot(normal, lightDir), 0.0);
-    float spec = getSpec(0.5, lightDir, normal, 16);
+    float spec = getSpec(diff, 0.5, lightDir, normal, 16);
 	col = (texture(diffuse0, texCoord) * (diff + ambient) + 
            texture(specular0, texCoord).r * spec).rgb * lightColour.rgb;
     
@@ -82,7 +90,7 @@ vec4 getSpotLight(float ambient, vec3 normal, vec3 lightDir, vec3 spotDir) {
 
     // Phong
     float diff = max(dot(normal, lightDir), 0.0);
-    float spec = getSpec(0.5, lightDir, normal, 16);
+    float spec = getSpec(diff, 0.5, lightDir, normal, 16);
 	col = (texture(diffuse0, texCoord) * (diff * intensity + ambient) + 
            texture(specular0, texCoord).r * spec * intensity).rgb * lightColour.rgb;
 

@@ -80,7 +80,7 @@ int App::loop() {
 
     
 
-    // Init frame buffer
+    // Init frame buffer (arg is for determining whether we apply MSAA or not)
     FBO postProcessingFBO(false);
     FBO antiAliasFBO(true);
 
