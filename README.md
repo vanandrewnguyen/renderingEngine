@@ -49,8 +49,7 @@ Edge Detection (Post-processing filter).
 
 Materials!
 
-![materials](https://user-images.githubusercontent.com/53636492/162161527-b93bce22-d92f-4d77-a7e7-1f06394a02de.gif)
-
+![glass wih split channels](https://user-images.githubusercontent.com/53636492/163186450-2c3daa3f-49d5-4c4c-8b52-54c5b45d6a74.PNG)
 
 Credits
 --
