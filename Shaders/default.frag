@@ -17,6 +17,7 @@ uniform vec4 lightColour;
 uniform vec3 lightPos;
 uniform vec3 camPos;
 uniform samplerCube skyboxTex;
+uniform vec3 matAlbedo;
 
 // LIGHTING ////////////////////////////////////////////////////////////
 
@@ -37,7 +38,7 @@ float getSpec(float diffuse, float specStrength, vec3 lightDir, vec3 normal, int
     return spec;
 }
 
-vec3 getPointLight(float ambient, vec3 normal, vec3 lightDir, vec3 currLightPos) {
+vec3 getPointLight(float ambient, vec3 normal, vec3 currLightPos) {
     // This light dims after a certain extent, which is modulated using intensity with the inverse square law.
 	// Lights objects in all directions equally.
 
@@ -45,11 +46,11 @@ vec3 getPointLight(float ambient, vec3 normal, vec3 lightDir, vec3 currLightPos)
 
     // Light attenuation
     vec3 lightRay = currLightPos - currentPos;
+    vec3 lightDir = normalize(lightRay);
     float rayDis = length(lightRay);
     float a = 1.0; // for a approaching 1 and b approaching 0 we have a weaker decay
     float b = 0.25; 
     float intensity = 1.0 / (a * rayDis * rayDis + b * rayDis + 1.0);
-    lightDir = normalize(lightRay);
 
     // Phong
     float diff = max(dot(normal, lightDir), 0.0);
@@ -60,12 +61,14 @@ vec3 getPointLight(float ambient, vec3 normal, vec3 lightDir, vec3 currLightPos)
     return col;
 }
 
-vec3 getDirectionalLight(float ambient, vec3 normal, vec3 lightDir) {
+vec3 getDirectionalLight(float ambient, vec3 normal, vec3 currLightPos) {
 	// This light casts a big light, which simulates rays which are mostly parallel to each other.
 	// Can be used for sunlight / natural light.
 
 	// Unlike the pointLight this does not include intensity, since it's implied to not decay as quickly
     vec3 col;
+    vec3 lightRay = currLightPos - currentPos;
+    vec3 lightDir = normalize(lightRay);
 
     // Phong
     float diff = max(dot(normal, lightDir), 0.0);
@@ -76,9 +79,11 @@ vec3 getDirectionalLight(float ambient, vec3 normal, vec3 lightDir) {
     return col;
 }
 
-vec4 getSpotLight(float ambient, vec3 normal, vec3 lightDir, vec3 spotDir) {
+vec4 getSpotLight(float ambient, vec3 normal, vec3 spotDir, vec3 currLightPos) {
 	// This light casts a circle of light.
     vec3 col;
+    vec3 lightRay = currLightPos - currentPos;
+    vec3 lightDir = normalize(lightRay);
 
 	// Width of inner and outer cone
 	float outerCone = 0.80f;
@@ -130,18 +135,38 @@ void main() {
     float far = 32.0;
     float depth = computeFogDepth(gl_FragCoord.z, 0.5, 1.0, near, far);
     vec3 fogCol = vec3(0.0, 0.05, 0.1);
-    vec3 lightPassCol = getPointLight(ambient, normal, lightDir, currLightPos) * vertColour * (1.0 - depth) + (depth * fogCol);
+    vec3 lightPassCol = matAlbedo * getPointLight(ambient, normal, currLightPos) * vertColour * (1.0 - depth) + (depth * fogCol);
 
     // Materials
     vec3 viewDir = normalize(currentPos - camPos);
     vec3 sampleDir = reflect(viewDir, normal);
     // Reflectivity
-    col = (1.0 - matReflectivity) * lightPassCol + matReflectivity * texture(skyboxTex, sampleDir).rgb;
+    if (matReflectivity != 0.0) {
+        col = (1.0 - matReflectivity) * lightPassCol + matReflectivity * texture(skyboxTex, sampleDir).rgb;
+    } else {
+        col = lightPassCol;
+    }
     // Translucency
     if (matIsTranslucent == 1) {
         float ratio = 1.0 / matIOR;
-        sampleDir = refract(viewDir, normal, ratio);
-        col = texture(skyboxTex, sampleDir).rgb;
+        // Add chromatic abberation through distorting the IOR for rgb channels on cube map sample
+        float increment = 0.05;
+        float abb = -increment;
+        for (int i = -1; i <= 1; i++) {
+            sampleDir = refract(viewDir, normal, 1.0 / (matIOR + abb));
+            // Avoid total internal reflection
+            if (dot(sampleDir, sampleDir) == 0.0) {
+                sampleDir = reflect(viewDir, normal);
+            }
+            if (abb < 0) {
+                col.r = texture(skyboxTex, sampleDir).r; 
+            } else if (abb == 0) {
+                col.g = texture(skyboxTex, sampleDir).g; 
+            } else if (abb > 0) {
+                col.b = texture(skyboxTex, sampleDir).b; 
+            }
+            abb += increment;
+        }
     }
 
     // Out

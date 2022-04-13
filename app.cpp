@@ -44,13 +44,7 @@ int App::loop() {
         Texture("Textures/texWoodFloor.png", "diffuse", 0),
         Texture("Textures/texWoodFloorDisp.png", "specular", 1)
     }; */
-    // Meshes //
-    // Importing models
-    Material matDiffuse(0.0f, 1.0f, 0);
-    Material matGlass(0.0f, 1.33f, 1);
-    Material matMetal(1.0f, 1.0f, 0);
-    Model model("Models/bunny/scene.gltf");
-
+    
     // Model Translations
     glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
     glm::vec3 lightPos = glm::vec3(0.0f, 0.0f, 0.0f); 
@@ -71,6 +65,13 @@ int App::loop() {
     glUniform1f(glGetUniformLocation(framebufferShader.ID, "screenHeight"), windowHeight);
     skyboxShader.Activate();
     glUniform1i(glGetUniformLocation(skyboxShader.ID, "skyboxTex"), 1);
+
+    // Meshes //
+    // Importing models
+    Material matDiffuse(0.0f, 1.0f, 0, { 1.0, 0.4, 0.6 }, defaultShader);
+    Material matGlass(0.0f, 1.33f, 1, { 1.0, 1.0, 1.0 }, defaultShader);
+    Material matMetal(1.0f, 1.0f, 0, { 1.0, 1.0, 1.0 }, defaultShader);
+    Model model("Models/bunny/scene.gltf");
 
     // Camera
     Camera camera(windowWidth, windowHeight, glm::vec3(0.0f, 0.0f, 2.0f));
@@ -109,6 +110,7 @@ int App::loop() {
         float timeStagger = 2.0;
         if (int(glfwGetTime() / timeStagger) % 3 == 0) {
             model.draw(defaultShader, camera, matDiffuse);
+            matDiffuse.refreshMaterialProperties(defaultShader);
         } else if (int(glfwGetTime() / timeStagger) % 3 == 1) {
             model.draw(defaultShader, camera, matGlass);
         } else {
