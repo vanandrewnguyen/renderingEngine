@@ -78,14 +78,12 @@ int App::loop() {
     // Face culling
     glEnable(GL_DEPTH_TEST);
 
-    
-
     // Init frame buffer (arg is for determining whether we apply MSAA or not)
     FBO postProcessingFBO(false);
     FBO antiAliasFBO(true);
 
     // Init cubemap for skybox
-    Cubemap Skybox;
+    Cubemap Skybox("ExteriorClouds");
 
     // Render loop
     while (!glfwWindowShouldClose(currWindow)) {

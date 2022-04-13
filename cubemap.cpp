@@ -33,7 +33,9 @@ unsigned int skyboxIndices[] = {
     6, 2, 3
 };
 
-Cubemap::Cubemap() {
+Cubemap::Cubemap(const char* folder) {
+    skyboxFolderPath = folder;
+
     glGenVertexArrays(1, &skyboxVAOID);
     glGenBuffers(1, &skyboxVBOID);
     glGenBuffers(1, &skyboxEBOID);
@@ -49,12 +51,12 @@ Cubemap::Cubemap() {
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     // File loc of skybox tex
     std::string facesCubemap[6] = {
-        "Textures/Skyboxes/InteriorBlur/px.jpg",
-        "Textures/Skyboxes/InteriorBlur/nx.jpg",
-        "Textures/Skyboxes/InteriorBlur/py.jpg",
-        "Textures/Skyboxes/InteriorBlur/ny.jpg",
-        "Textures/Skyboxes/InteriorBlur/pz.jpg",
-        "Textures/Skyboxes/InteriorBlur/nz.jpg"
+        "Textures/Skyboxes/" + skyboxFolderPath + "/px.jpg",
+        "Textures/Skyboxes/" + skyboxFolderPath + "/nx.jpg",
+        "Textures/Skyboxes/" + skyboxFolderPath + "/py.jpg",
+        "Textures/Skyboxes/" + skyboxFolderPath + "/ny.jpg",
+        "Textures/Skyboxes/" + skyboxFolderPath + "/pz.jpg",
+        "Textures/Skyboxes/" + skyboxFolderPath + "/nz.jpg"
     };
     // Init texture for cubemap
     unsigned int cubemapTexture;

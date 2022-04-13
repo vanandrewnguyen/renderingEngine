@@ -34,6 +34,9 @@
     <Filter Include="Source Files\Textures\Skyboxes\InteriorBlur">
       <UniqueIdentifier>{d7b89ba8-9332-491c-b4f2-709213329a20}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\Textures\Skyboxes\ExteriorClouds">
+      <UniqueIdentifier>{5d2eb9d2-3de3-42b0-93aa-ea8e037fdf83}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="glad.c">
@@ -157,11 +160,11 @@
     <None Include="Models\dragon\scene.bin">
       <Filter>Source Files\Models\dragon</Filter>
     </None>
-    <None Include="Shaders\skybox.vert">
-      <Filter>Source Files\Shaders</Filter>
-    </None>
     <None Include="Shaders\skybox.frag">
       <Filter>Source Files\Shaders</Filter>
+    </None>
+    <None Include="Shaders\skybox.vert">
+      <Filter>Source Files\Textures</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
@@ -213,5 +216,31 @@
     <Image Include="Textures\texBrickWall.png">
       <Filter>Resource Files</Filter>
     </Image>
+    <Image Include="Textures\texBrickWall.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="Textures\Skyboxes\ExteriorClouds\pz.jpg">
+      <Filter>Source Files\Textures\Skyboxes\ExteriorClouds</Filter>
+    </Image>
+    <Image Include="Textures\Skyboxes\ExteriorClouds\nx.jpg">
+      <Filter>Source Files\Textures\Skyboxes\ExteriorClouds</Filter>
+    </Image>
+    <Image Include="Textures\Skyboxes\ExteriorClouds\ny.jpg">
+      <Filter>Source Files\Textures\Skyboxes\ExteriorClouds</Filter>
+    </Image>
+    <Image Include="Textures\Skyboxes\ExteriorClouds\nz.jpg">
+      <Filter>Source Files\Textures\Skyboxes\ExteriorClouds</Filter>
+    </Image>
+    <Image Include="Textures\Skyboxes\ExteriorClouds\px.jpg">
+      <Filter>Source Files\Textures\Skyboxes\ExteriorClouds</Filter>
+    </Image>
+    <Image Include="Textures\Skyboxes\ExteriorClouds\py.jpg">
+      <Filter>Source Files\Textures\Skyboxes\ExteriorClouds</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Textures\Skyboxes\ExteriorClouds\README.TXT">
+      <Filter>Source Files\Textures\Skyboxes\ExteriorClouds</Filter>
+    </Text>
   </ItemGroup>
 </Project>

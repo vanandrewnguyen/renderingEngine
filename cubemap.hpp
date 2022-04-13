@@ -11,7 +11,7 @@
 
 class Cubemap {
 public:
-	Cubemap();
+	Cubemap(const char* folder);
 
 	void draw(float windowWidth, float windowHeight, Shader& skyboxShader, Camera& camera);
 public:
@@ -19,6 +19,7 @@ public:
 	GLuint skyboxVBOID;
 	GLuint skyboxEBOID;
 	GLuint skyboxTexID;
+	std::string skyboxFolderPath;
 };
 
 #endif

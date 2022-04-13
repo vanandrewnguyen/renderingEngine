@@ -199,6 +199,12 @@
     <Image Include="Models\dragon\baseColor.png" />
     <Image Include="Models\dragon\metallicRoughness.png" />
     <Image Include="Models\dragon\normal.png" />
+    <Image Include="Textures\Skyboxes\ExteriorClouds\nx.jpg" />
+    <Image Include="Textures\Skyboxes\ExteriorClouds\ny.jpg" />
+    <Image Include="Textures\Skyboxes\ExteriorClouds\nz.jpg" />
+    <Image Include="Textures\Skyboxes\ExteriorClouds\px.jpg" />
+    <Image Include="Textures\Skyboxes\ExteriorClouds\py.jpg" />
+    <Image Include="Textures\Skyboxes\ExteriorClouds\pz.jpg" />
     <Image Include="Textures\Skyboxes\InteriorBlur\nx.jpg" />
     <Image Include="Textures\Skyboxes\InteriorBlur\ny.jpg" />
     <Image Include="Textures\Skyboxes\InteriorBlur\nz.jpg" />
@@ -211,6 +217,9 @@
   </ItemGroup>
   <ItemGroup>
     <Image Include="Textures\texBrickWall.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="Textures\Skyboxes\ExteriorClouds\README.TXT" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
