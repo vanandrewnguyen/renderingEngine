@@ -68,9 +68,9 @@ int App::loop() {
 
     // Meshes //
     // Importing models
-    Material matDiffuse(0.0f, 1.0f, 0, { 1.0, 0.4, 0.6 }, defaultShader);
-    Material matGlass(0.0f, 1.33f, 1, { 1.0, 1.0, 1.0 }, defaultShader);
-    Material matMetal(1.0f, 1.0f, 0, { 1.0, 1.0, 1.0 }, defaultShader);
+    Material matDiffuse(0.0f, 1.0f, 0.0f, { 1.0, 0.4, 0.6 }, defaultShader);
+    Material matGlass(0.0f, 1.33f, 1.0f, { 1.0, 1.0, 1.0 }, defaultShader);
+    Material matMetal(1.0f, 1.0f, 0.0f, { 1.0, 1.0, 1.0 }, defaultShader);
     Model model("Models/bunny/scene.gltf");
 
     // Camera
@@ -113,8 +113,10 @@ int App::loop() {
             matDiffuse.refreshMaterialProperties(defaultShader);
         } else if (int(glfwGetTime() / timeStagger) % 3 == 1) {
             model.draw(defaultShader, camera, matGlass);
+            matGlass.refreshMaterialProperties(defaultShader);
         } else {
             model.draw(defaultShader, camera, matMetal);
+            matMetal.refreshMaterialProperties(defaultShader);
         }
 
         // Uniforms

@@ -6,9 +6,6 @@ in vec3 currentPos;
 in vec3 surfNormal;
 in vec3 vertColour;
 in vec2 texCoord;
-in float matReflectivity;
-in float matIOR;
-in float matIsTranslucent;
 
 uniform float iTime;
 uniform sampler2D diffuse0;
@@ -17,6 +14,9 @@ uniform vec4 lightColour;
 uniform vec3 lightPos;
 uniform vec3 camPos;
 uniform samplerCube skyboxTex;
+uniform float matReflectivity;
+uniform float matIOR;
+uniform float matTranslucency;
 uniform vec3 matAlbedo;
 
 // LIGHTING ////////////////////////////////////////////////////////////
@@ -147,7 +147,7 @@ void main() {
         col = lightPassCol;
     }
     // Translucency
-    if (matIsTranslucent == 1) {
+    if (matTranslucency != 0.0) {
         float ratio = 1.0 / matIOR;
         // Add chromatic abberation through distorting the IOR for rgb channels on cube map sample
         float increment = 0.05;
@@ -159,11 +159,11 @@ void main() {
                 sampleDir = reflect(viewDir, normal);
             }
             if (abb < 0) {
-                col.r = texture(skyboxTex, sampleDir).r; 
+                col.r = mix(col.r, texture(skyboxTex, sampleDir).r, matTranslucency); 
             } else if (abb == 0) {
-                col.g = texture(skyboxTex, sampleDir).g; 
+                col.g = mix(col.g, texture(skyboxTex, sampleDir).g, matTranslucency); 
             } else if (abb > 0) {
-                col.b = texture(skyboxTex, sampleDir).b; 
+                col.b = mix(col.b, texture(skyboxTex, sampleDir).b, matTranslucency);  
             }
             abb += increment;
         }
