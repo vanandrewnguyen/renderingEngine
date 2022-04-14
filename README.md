@@ -9,11 +9,11 @@ Boilerplate Features
 - [x] Triangles!
 - [x] 3D Projection and Camera Movement
 - [x] Custom texture mapping
-- [x] Phong lighting
+- [x] Blinn-Phong lighting
 - [ ] Multiple Lights
 - [x] Depth Buffer
 - [x] Simple Materials
-- [ ] Anti-aliasing (MSAA)
+- [x] Anti-aliasing (MSAA)
 
 Planned Advanced Features
 --
