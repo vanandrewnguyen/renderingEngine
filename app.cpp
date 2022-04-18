@@ -1,5 +1,21 @@
 #include "app.hpp"
 
+
+// Verts and Inds for Floor Mesh
+float floorSize = 0.25f;
+Vertex vertices[] = {
+    // Vert Coord // Normals // Colour // Tex Coord
+    Vertex{glm::vec3(-floorSize, 0.0f,  floorSize), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 0.0f)},
+    Vertex{glm::vec3(-floorSize, 0.0f, -floorSize), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(0.0f, 1.0f)},
+    Vertex{glm::vec3(floorSize, 0.0f, -floorSize), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 1.0f)},
+    Vertex{glm::vec3(floorSize, 0.0f,  floorSize), glm::vec3(0.0f, 1.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec2(1.0f, 0.0f)}
+};
+
+GLuint indices[] = {
+    0, 1, 2,
+    0, 2, 3
+};
+
 // Constructor (init variables)
 App::App() {
     windowWidth = 800;
@@ -38,12 +54,11 @@ int App::loop() {
     Shader framebufferShader("Shaders/framebuffer.vert", "Shaders/framebuffer.frag");
     Shader skyboxShader("Shaders/skybox.vert", "Shaders/skybox.frag");
 
-    /*
     // Textures
     Texture textures[] = {
         Texture("Textures/texWoodFloor.png", "diffuse", 0),
         Texture("Textures/texWoodFloorDisp.png", "specular", 1)
-    }; */
+    }; 
     
     // Model Translations
     glm::vec4 lightColor = glm::vec4(1.0f, 1.0f, 1.0f, 1.0f);
@@ -66,12 +81,18 @@ int App::loop() {
     skyboxShader.Activate();
     glUniform1i(glGetUniformLocation(skyboxShader.ID, "skyboxTex"), 1);
 
-    // Meshes //
-    // Importing models
+    // Materials
+    Material matFloor(0.0f, 1.0f, 0.0f, { 1.0, 1.0, 1.0 }, defaultShader);
     Material matDiffuse(0.0f, 1.0f, 0.0f, { 1.0, 0.4, 0.6 }, defaultShader);
     Material matGlass(0.0f, 1.33f, 1.0f, { 1.0, 1.0, 1.0 }, defaultShader);
     Material matMetal(1.0f, 1.0f, 0.0f, { 1.0, 1.0, 1.0 }, defaultShader);
+    
+    // Load models and meshes
     Model modelBunny("Models/bunny/scene.gltf");
+    std::vector <Vertex> verts(vertices, vertices + sizeof(vertices) / sizeof(Vertex));
+    std::vector <GLuint> ind(indices, indices + sizeof(indices) / sizeof(GLuint));
+    std::vector <Texture> tex(textures, textures + sizeof(textures) / sizeof(Texture));
+    Mesh meshFloor(verts, ind, tex);
 
     // Camera
     Camera camera(windowWidth, windowHeight, glm::vec3(0.0f, 0.0f, 2.0f));
@@ -106,25 +127,16 @@ int App::loop() {
         camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
         // Render meshes and models
-        matDiffuse.refreshMaterialProperties(defaultShader);
-        modelBunny.draw(defaultShader, camera, matDiffuse, std::vector<float> {0.0f, 0.0f, 0.0f});
         matGlass.refreshMaterialProperties(defaultShader);
         modelBunny.draw(defaultShader, camera, matGlass, std::vector<float> {0.15f, 0.0f, 0.0f});
         matMetal.refreshMaterialProperties(defaultShader);
         modelBunny.draw(defaultShader, camera, matMetal, std::vector<float> {-0.15f, 0.0f, 0.0f});
-        /*
-        float timeStagger = 2.0;
-        if (int(glfwGetTime() / timeStagger) % 3 == 0) {
-            model.draw(defaultShader, camera, matDiffuse);
-            matDiffuse.refreshMaterialProperties(defaultShader);
-        } else if (int(glfwGetTime() / timeStagger) % 3 == 1) {
-            model.draw(defaultShader, camera, matGlass);
-            matGlass.refreshMaterialProperties(defaultShader);
-        } else {
-            model.draw(defaultShader, camera, matMetal);
-            matMetal.refreshMaterialProperties(defaultShader);
-        }
-        */
+        matDiffuse.refreshMaterialProperties(defaultShader);
+        modelBunny.draw(defaultShader, camera, matDiffuse, std::vector<float> {0.0f, 0.0f, 0.0f});
+        // Disable culling since mesh will be destroyed otherwise
+        glDisable(GL_CULL_FACE);
+        matFloor.refreshMaterialProperties(defaultShader);
+        meshFloor.draw(defaultShader, camera, matFloor, std::vector<float> {0.0f, 0.065f, 0.0f});
 
         // Uniforms
         timeCurr = glfwGetTime();
@@ -178,3 +190,17 @@ void App::handleUserInput(GLFWwindow* currWindow) {
         glfwSetWindowShouldClose(currWindow, true);
     }
 }
+
+/*
+float timeStagger = 2.0;
+if (int(glfwGetTime() / timeStagger) % 3 == 0) {
+    model.draw(defaultShader, camera, matDiffuse);
+    matDiffuse.refreshMaterialProperties(defaultShader);
+} else if (int(glfwGetTime() / timeStagger) % 3 == 1) {
+    model.draw(defaultShader, camera, matGlass);
+    matGlass.refreshMaterialProperties(defaultShader);
+} else {
+    model.draw(defaultShader, camera, matMetal);
+    matMetal.refreshMaterialProperties(defaultShader);
+}
+*/

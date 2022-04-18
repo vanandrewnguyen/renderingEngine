@@ -190,6 +190,8 @@
     <None Include="Shaders\light.vert" />
     <None Include="Shaders\raymarch.frag" />
     <None Include="Shaders\raymarch.vert" />
+    <None Include="Shaders\shadowmap.frag" />
+    <None Include="Shaders\shadowmap.vert" />
     <None Include="Shaders\skybox.frag" />
     <None Include="Shaders\skybox.vert" />
   </ItemGroup>

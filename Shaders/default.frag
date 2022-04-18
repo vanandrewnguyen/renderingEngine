@@ -124,7 +124,7 @@ void main() {
     currLightPos.yz += vec2(sin(iTime), cos(iTime)) * 1.0;
 
     // Lighting
-    float ambient = 0.1;
+    float ambient = 0.4;
     vec3 normal = normalize(surfNormal);
     vec3 lightDir = normalize(currLightPos - currentPos);
 
@@ -142,7 +142,10 @@ void main() {
     vec3 sampleDir = reflect(viewDir, normal);
     // Reflectivity
     if (matReflectivity != 0.0) {
+        float diff = max(dot(normal, lightDir), 0.0);
+        float spec = getSpec(diff, 0.1, lightDir, normal, 64);
         col = (1.0 - matReflectivity) * lightPassCol + matReflectivity * texture(skyboxTex, sampleDir).rgb;
+        col = mix(col, lightColour.rgb, spec);
     } else {
         col = lightPassCol;
     }
