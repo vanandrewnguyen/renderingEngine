@@ -71,7 +71,7 @@ int App::loop() {
     Material matDiffuse(0.0f, 1.0f, 0.0f, { 1.0, 0.4, 0.6 }, defaultShader);
     Material matGlass(0.0f, 1.33f, 1.0f, { 1.0, 1.0, 1.0 }, defaultShader);
     Material matMetal(1.0f, 1.0f, 0.0f, { 1.0, 1.0, 1.0 }, defaultShader);
-    Model model("Models/bunny/scene.gltf");
+    Model modelBunny("Models/bunny/scene.gltf");
 
     // Camera
     Camera camera(windowWidth, windowHeight, glm::vec3(0.0f, 0.0f, 2.0f));
@@ -106,7 +106,13 @@ int App::loop() {
         camera.updateMatrix(45.0f, 0.1f, 100.0f);
 
         // Render meshes and models
-        //model.draw(defaultShader, camera, matDiffuse);
+        matDiffuse.refreshMaterialProperties(defaultShader);
+        modelBunny.draw(defaultShader, camera, matDiffuse, std::vector<float> {0.0f, 0.0f, 0.0f});
+        matGlass.refreshMaterialProperties(defaultShader);
+        modelBunny.draw(defaultShader, camera, matGlass, std::vector<float> {0.15f, 0.0f, 0.0f});
+        matMetal.refreshMaterialProperties(defaultShader);
+        modelBunny.draw(defaultShader, camera, matMetal, std::vector<float> {-0.15f, 0.0f, 0.0f});
+        /*
         float timeStagger = 2.0;
         if (int(glfwGetTime() / timeStagger) % 3 == 0) {
             model.draw(defaultShader, camera, matDiffuse);
@@ -118,6 +124,7 @@ int App::loop() {
             model.draw(defaultShader, camera, matMetal);
             matMetal.refreshMaterialProperties(defaultShader);
         }
+        */
 
         // Uniforms
         timeCurr = glfwGetTime();

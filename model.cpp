@@ -13,9 +13,9 @@ Model::Model(const char* file) {
 	traverseNode(0);
 }
 
-void Model::draw(Shader& shader, Camera& camera, Material& mat) {
+void Model::draw(Shader& shader, Camera& camera, Material& mat, std::vector<float> worldTranslation) {
 	for (unsigned int i = 0; i < meshes.size(); i++) {
-		meshes[i].Mesh::draw(shader, camera, mat, matricesMeshes[i]);
+		meshes[i].Mesh::draw(shader, camera, mat, worldTranslation, matricesMeshes[i]);
 	}
 }
 

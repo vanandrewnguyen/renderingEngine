@@ -14,11 +14,12 @@ uniform mat4 model;
 uniform mat4 translation;
 uniform mat4 rotation;
 uniform mat4 scale;
+uniform vec3 worldPosTranslation;
 
 void main() {
     // Pass variable to frag
     // rot is neg, play with it. 
-    currentPos = vec3(model * translation * -rotation * scale * vec4(aPos, 1.0));
+    currentPos = vec3(model * translation * -rotation * scale * vec4(aPos, 1.0)) + worldPosTranslation;
     texCoord = mat2(0.0, -1.0, 1.0, 0.0) * aTex;
     surfNormal = aNormal;
     vertColour = aColour;

@@ -24,7 +24,7 @@ Mesh::Mesh(std::vector <Vertex>& vertices, std::vector <GLuint>& indices, std::v
 }
 
 // Draws the mesh with default values
-void Mesh::draw(Shader& shader, Camera& camera, Material mat, glm::mat4 matrix,
+void Mesh::draw(Shader& shader, Camera& camera, Material mat, std::vector<float> worldTranslation, glm::mat4 matrix,
 				glm::vec3 translation, glm::quat rotation, glm::vec3 scale) {
 	// Bind shader to access uniforms
 	shader.Activate();
@@ -67,6 +67,9 @@ void Mesh::draw(Shader& shader, Camera& camera, Material mat, glm::mat4 matrix,
 	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "scale"), 1, GL_FALSE, glm::value_ptr(sca));
 	glUniformMatrix4fv(glGetUniformLocation(shader.ID, "model"), 1, GL_FALSE, glm::value_ptr(matrix));
 
+	// Push translation of mesh in world space
+	glUniform3f(glGetUniformLocation(shader.ID, "worldPosTranslation"), worldTranslation.at(0), worldTranslation.at(1), worldTranslation.at(2));
+	
 	// Push material to vertex shader (to be passed onto fragment shader)
 	//glUniform1f(glGetUniformLocation(shader.ID, "materialReflectivity"), mat.reflectivity);
 	//glUniform1f(glGetUniformLocation(shader.ID, "materialIOR"), mat.IOR);

@@ -13,7 +13,7 @@ public:
 	Model(const char* file);
 
 	// Functions
-	void draw(Shader& shader, Camera& camera, Material &mat);
+	void draw(Shader& shader, Camera& camera, Material &mat, std::vector<float> worldTranslation);
 
 private:
 	std::vector<unsigned char> getData();
