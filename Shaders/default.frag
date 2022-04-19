@@ -144,7 +144,7 @@ void main() {
     if (matReflectivity != 0.0) {
         float diff = max(dot(normal, lightDir), 0.0);
         float spec = getSpec(diff, 0.1, lightDir, normal, 64);
-        col = (1.0 - matReflectivity) * lightPassCol + matReflectivity * texture(skyboxTex, sampleDir).rgb;
+        col = (1.0 - matReflectivity) * lightPassCol + matReflectivity * texture(skyboxTex, sampleDir).rgb * matAlbedo;
         col = mix(col, lightColour.rgb, spec);
     } else {
         col = lightPassCol;
@@ -162,11 +162,11 @@ void main() {
                 sampleDir = reflect(viewDir, normal);
             }
             if (abb < 0) {
-                col.r = mix(col.r, texture(skyboxTex, sampleDir).r, matTranslucency); 
+                col.r = mix(col.r, texture(skyboxTex, sampleDir).r * matAlbedo.r, matTranslucency); 
             } else if (abb == 0) {
-                col.g = mix(col.g, texture(skyboxTex, sampleDir).g, matTranslucency); 
+                col.g = mix(col.g, texture(skyboxTex, sampleDir).g * matAlbedo.g, matTranslucency); 
             } else if (abb > 0) {
-                col.b = mix(col.b, texture(skyboxTex, sampleDir).b, matTranslucency);  
+                col.b = mix(col.b, texture(skyboxTex, sampleDir).b * matAlbedo.b, matTranslucency);  
             }
             abb += increment;
         }

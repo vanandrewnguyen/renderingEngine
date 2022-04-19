@@ -83,7 +83,7 @@ int App::loop() {
 
     // Materials
     Material matFloor(0.0f, 1.0f, 0.0f, { 1.0, 1.0, 1.0 }, defaultShader);
-    Material matDiffuse(0.0f, 1.0f, 0.0f, { 1.0, 0.4, 0.6 }, defaultShader);
+    Material matDiffuse(0.0f, 1.0f, 0.0f, { 1.0, 1.0, 1.0 }, defaultShader);
     Material matGlass(0.0f, 1.33f, 1.0f, { 1.0, 1.0, 1.0 }, defaultShader);
     Material matMetal(1.0f, 1.0f, 0.0f, { 1.0, 1.0, 1.0 }, defaultShader);
     
@@ -136,7 +136,7 @@ int App::loop() {
         // Disable culling since mesh will be destroyed otherwise
         glDisable(GL_CULL_FACE);
         matFloor.refreshMaterialProperties(defaultShader);
-        meshFloor.draw(defaultShader, camera, matFloor, std::vector<float> {0.0f, 0.065f, 0.0f});
+        meshFloor.draw(defaultShader, camera, matFloor, std::vector<float> {0.0f, 0.062f, 0.0f});
 
         // Uniforms
         timeCurr = glfwGetTime();
