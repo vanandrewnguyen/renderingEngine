@@ -95,7 +95,7 @@ int App::loop() {
     Mesh meshFloor(verts, ind, tex);
 
     // Camera
-    Camera camera(windowWidth, windowHeight, glm::vec3(0.0f, 0.0f, 2.0f));
+    Camera camera(windowWidth, windowHeight, glm::vec3(0.0f, 0.2f, 0.8f));
 
     // Face culling
     glEnable(GL_DEPTH_TEST);
