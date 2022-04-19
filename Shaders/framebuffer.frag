@@ -6,6 +6,8 @@ in vec2 texCoords;
 uniform float screenWidth;
 uniform float screenHeight;
 uniform sampler2D screenTexture;
+uniform vec3 cameraPos;
+uniform vec3 cameraOrientation;
 
 #define MAXSTEPS 100
 #define MAXDIS 100.0
@@ -47,6 +49,17 @@ float kernal[9] = float[](
 	0, 0, 0
 );
 
+void main() {
+	vec3 col = vec3(0);
+	// Add the kernel
+	for (int i = 0; i < 9; i++) {
+		col += texture(screenTexture, texCoords + offset[i]).rgb * kernal[i]; 
+	}
+
+	FragColor = vec4(col, 1.0);
+}
+
+/*
 float sdfSphere(vec3 pos, vec3 center, float rad) {
     pos -= center;
     return length(pos) - rad;
@@ -107,11 +120,5 @@ void main() {
 	}
 
 	FragColor = vec4(col, 1.0);
-}
-
-// Add the kernel
-/*
-for (int i = 0; i < 9; i++) {
-	col += texture(screenTexture, texCoords + offset[i]).rgb * kernal[i]; 
 }
 */

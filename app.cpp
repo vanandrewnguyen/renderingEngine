@@ -148,6 +148,8 @@ int App::loop() {
             counter = 0;
         }
         glUniform1f(uniTime, glfwGetTime());
+        glUniform3f(glGetUniformLocation(framebufferShader.ID, "cameraPos"), camera.Position.x, camera.Position.y, camera.Position.z);
+        glUniform3f(glGetUniformLocation(framebufferShader.ID, "cameraOrientation"), camera.Orientation.x, camera.Orientation.y, camera.Orientation.z);
 
         // Drawing the skybox
         Skybox.draw(windowWidth, windowHeight, skyboxShader, camera);
