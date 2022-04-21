@@ -125,14 +125,16 @@ int App::loop() {
         // Camera
         camera.Inputs(currWindow);
         camera.updateMatrix(45.0f, 0.1f, 100.0f);
-
+        
         // Render meshes and models
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
         matGlass.refreshMaterialProperties(defaultShader);
         modelBunny.draw(defaultShader, camera, matGlass, std::vector<float> {0.15f, 0.0f, 0.0f});
         matMetal.refreshMaterialProperties(defaultShader);
         modelBunny.draw(defaultShader, camera, matMetal, std::vector<float> {-0.15f, 0.0f, 0.0f});
         matDiffuse.refreshMaterialProperties(defaultShader);
         modelBunny.draw(defaultShader, camera, matDiffuse, std::vector<float> {0.0f, 0.0f, 0.0f});
+        //glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
         // Disable culling since mesh will be destroyed otherwise
         glDisable(GL_CULL_FACE);
         matFloor.refreshMaterialProperties(defaultShader);
