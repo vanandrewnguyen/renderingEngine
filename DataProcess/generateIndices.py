@@ -51,6 +51,7 @@ def main():
     # Establish connection to files
     inputPath: str = ""
     inputName: str = "test3x3.txt"
+    # NUMBER OF DIVISIONS IS BASED ON CONFIG OF LIDAR SCANNER
     DIV = 2
     f = open(inputPath + inputName, "r")
 
