@@ -1,7 +1,7 @@
 # renderingEngine
 ### A 3D rendering pipeline using real-life data.
 
-I'm attempting to create a very basic 3D reconstruction pipeline! The goal of this project is to generate a series of point clouds using an Arduino Lidar scanner, and processing the data load in a rendering engine. I also wish to automate this process from scanning to processing to rendering. I'm using Open3D to convert the data into a mesh, OpenGL and Assimp to render the mesh, and ImGUI to dynamically load files. 
+I'm attempting to create a very basic 3D reconstruction pipeline! The goal of this project is to generate a series of point clouds using an Arduino Lidar scanner, and processing the data load in a rendering engine. I also wish to automate this process from scanning to processing to rendering. I'm using python scripting to convert the data into a mesh, OpenGL and Assimp to render the mesh.
 
 ## Milestones
 - [x] Create a rendering engine capable of displaying meshes with textures.
